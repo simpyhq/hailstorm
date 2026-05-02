@@ -594,6 +594,91 @@ body.night-mode .main-interface {
   padding-top: 0;
 }
 
+.canvas-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-top: 1px solid rgba(var(--primary-rgb), 0.1);
+  font-size: 0.65rem;
+  gap: 8px;
+}
+
+#canvas-list > .canvas-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.canvas-title {
+  flex: 1;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.canvas-due {
+  font-size: 0.6rem;
+  min-width: 52px;
+  text-align: right;
+}
+
+.canvas-due--urgent {
+  color: #ff6b6b;
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+}
+
+.canvas-due--soon {
+  color: #ffd700;
+}
+
+.canvas-due--ok {
+  color: #81ff9b;
+}
+
+.bruce-heading {
+  color: var(--primary-color);
+  text-shadow: 0 0 10px rgba(var(--primary-rgb), 0.7), 0 0 18px rgba(var(--primary-rgb), 0.28);
+}
+
+.bruce-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bruce-status {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+}
+
+.bruce-trade {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+}
+
+.bruce-pnl {
+  font-size: 0.72rem;
+  color: var(--primary-color);
+  font-weight: 700;
+  text-shadow: var(--text-glow);
+}
+
+.stat-label {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.14em;
+}
+
+.stat-val {
+  font-size: 0.72rem;
+  color: var(--primary-color);
+  font-weight: 700;
+  text-shadow: var(--text-glow);
+}
+
 .polymarket-row {
   display: flex;
   justify-content: space-between;

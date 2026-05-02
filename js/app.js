@@ -1,4 +1,7 @@
 import { JarvisOrb } from "./orb.js";
+import { initBruce } from "./bruce.js";
+import { initCanvas } from "./canvas.js";
+import { initInternships } from "./internships.js";
 import { initNews } from "./news.js";
 import { initMacro } from "./macro.js";
 import { initPolymarket } from "./polymarket.js";
@@ -259,6 +262,9 @@ async function runBootSequence() {
   initPolymarket();
   initSports();
   initMacro();
+  initCanvas();
+  initBruce();
+  initInternships();
 }
 
 function bindEvents() {
@@ -320,5 +326,8 @@ window.addEventListener("load", () => {
     initPolymarket();
     initSports();
     initMacro();
+    initCanvas();
+    initBruce();
+    initInternships();
   });
 });

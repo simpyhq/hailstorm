@@ -98,10 +98,8 @@
 
         <section class="hud-widget">
           <h2>CANVAS</h2>
-          <div class="widget-list">
-            <div><span>PHYSICS LAB</span><span>DUE 05/03</span></div>
-            <div><span>ECON PAPER</span><span>DUE 05/05</span></div>
-            <div><span>ML QUIZ</span><span>DUE 05/07</span></div>
+          <div id="canvas-list" class="widget-list">
+            <div class="canvas-row"><span>Loading...</span></div>
           </div>
         </section>
 
@@ -131,9 +129,22 @@
         </section>
 
         <section class="hud-widget">
+          <h2 class="bruce-heading">BRUCE &mdash; OPTIONS</h2>
+          <div class="bruce-widget">
+            <div id="bruce-status" class="bruce-status">-- CHECKING --</div>
+            <div id="bruce-trade-1" class="bruce-trade">No active trades</div>
+            <div id="bruce-pnl" class="bruce-pnl">P&amp;L: --</div>
+          </div>
+        </section>
+
+        <section class="hud-widget">
           <h2>INTERNSHIPS</h2>
           <div class="widget-list">
-            <div><span>ACTIVE TRACKING</span><span>12 OPEN</span></div>
+            <div class="widget-row"><span class="stat-label">APPLIED</span><span id="internship-applied" class="stat-val">--</span></div>
+            <div class="widget-row"><span class="stat-label">INTERVIEW</span><span id="internship-interview" class="stat-val">--</span></div>
+            <div class="widget-row"><span class="stat-label">OFFER</span><span id="internship-offer" class="stat-val">--</span></div>
+            <div class="widget-row"><span class="stat-label">REJECTED</span><span id="internship-rejected" class="stat-val">--</span></div>
+            <div class="widget-row"><span class="stat-label">TOTAL</span><span id="internship-total" class="stat-val">--</span></div>
           </div>
         </section>
       </aside>
