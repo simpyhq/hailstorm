@@ -1,3 +1,5 @@
+import { bindDeepLink } from "./deeplinks.js";
+
 const POLYMARKET_URL =
   "/api/polymarket";
 const POLYMARKET_REFRESH_MS = 300_000;
@@ -155,6 +157,10 @@ export function initPolymarket() {
   if (polymarketIntervalId !== null) {
     return;
   }
+
+  // Widget heading opens Polymarket
+  const header = document.querySelector("#polymarket-list")?.closest(".hud-widget")?.querySelector("h2");
+  bindDeepLink(header, "polymarket");
 
   updatePolymarket().catch(() => {});
   polymarketIntervalId = window.setInterval(() => {

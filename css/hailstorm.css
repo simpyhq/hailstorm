@@ -541,6 +541,23 @@ body.night-mode .main-interface {
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.22em;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+/* Deep-link headers get a subtle glow on hover/tap */
+.hud-widget h2[style*="cursor: pointer"]:hover,
+.hud-widget h2[style*="cursor:pointer"]:hover {
+  color: #fff;
+  text-shadow: 0 0 10px var(--glow-color), 0 0 22px rgba(var(--primary-rgb), 0.6);
+}
+
+.hud-widget h2[style*="cursor: pointer"]::after,
+.hud-widget h2[style*="cursor:pointer"]::after {
+  content: " ↗";
+  font-size: 0.55rem;
+  opacity: 0.45;
+  vertical-align: super;
+  letter-spacing: 0;
 }
 
 .widget-grid,

@@ -1,3 +1,5 @@
+import { bindDeepLink } from "./deeplinks.js";
+
 const MARKET_TIMEZONE = "America/New_York";
 const MARKET_OPEN_MINUTES = 9 * 60 + 30;
 const MARKET_CLOSE_MINUTES = 16 * 60;
@@ -51,6 +53,10 @@ export function initBruce() {
   if (!statusEl || !tradeEl || !pnlEl) {
     return;
   }
+
+  // Clicking the Bruce widget heading opens Robinhood options
+  const header = statusEl.closest(".hud-widget")?.querySelector("h2");
+  bindDeepLink(header, "robinhood-options");
 
   tradeEl.textContent = "No active trades";
   pnlEl.textContent = "P&L: --";

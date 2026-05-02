@@ -1,3 +1,5 @@
+import { bindDeepLink } from "./deeplinks.js";
+
 const LOGIN_URL = "https://simpyhq.com/api/auth/login";
 const LISTINGS_URL = "https://simpyhq.com/api/jobs/listings";
 const LOGIN_PASSWORD = "Chrissim2006!";
@@ -85,6 +87,10 @@ function renderCounts(counts) {
 }
 
 export function initInternships() {
+  // Widget heading opens Handshake
+  const header = document.getElementById("internship-total")?.closest(".hud-widget")?.querySelector("h2");
+  bindDeepLink(header, "handshake");
+
   const refresh = async () => {
     try {
       const listings = await fetchListings();

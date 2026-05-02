@@ -1,3 +1,5 @@
+import { bindDeepLink } from "./deeplinks.js";
+
 const SPORTS_REFRESH_MS = 600_000;
 const TEAM_CONFIG = [
   {
@@ -172,6 +174,10 @@ export function initSports() {
   if (sportsIntervalId !== null) {
     return;
   }
+
+  // Widget heading opens ESPN
+  const header = document.getElementById("rangers-score")?.closest(".hud-widget")?.querySelector("h2");
+  bindDeepLink(header, "espn");
 
   updateSports().catch(() => {});
   sportsIntervalId = window.setInterval(() => {

@@ -1,3 +1,5 @@
+import { bindDeepLink } from "./deeplinks.js";
+
 const CANVAS_URL = "/api/canvas-events";
 const REFRESH_INTERVAL_MS = 30 * 60 * 1000;
 
@@ -91,6 +93,10 @@ export function initCanvas() {
   if (!listEl) {
     return;
   }
+
+  // Make the widget header a deep link
+  const header = listEl.closest(".hud-widget")?.querySelector("h2");
+  bindDeepLink(header, "canvas");
 
   const refresh = async () => {
     try {
