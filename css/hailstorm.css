@@ -564,7 +564,7 @@ body.night-mode .main-interface {
   gap: 8px;
 }
 
-.widget-list > div,
+.widget-list > div:not(.widget-row),
 .stat-row {
   display: flex;
   align-items: center;
@@ -574,10 +574,105 @@ body.night-mode .main-interface {
   border-top: 1px solid rgba(var(--primary-rgb), 0.12);
 }
 
-.widget-list > div:first-child,
+.widget-list > div:not(.widget-row):first-child,
 .stat-row:first-child {
   border-top: 0;
   padding-top: 0;
+}
+
+.widget-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-top: 1px solid rgba(var(--primary-rgb), 0.1);
+  gap: 8px;
+}
+
+.widget-list > .widget-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.polymarket-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-top: 1px solid rgba(var(--primary-rgb), 0.1);
+  font-size: 0.65rem;
+}
+
+.widget-list > :first-child .polymarket-row {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.polymarket-question {
+  flex: 1;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.polymarket-prob {
+  font-weight: 700;
+  min-width: 36px;
+  text-align: right;
+}
+
+.polymarket-prob--high {
+  color: #81ff9b;
+}
+
+.polymarket-prob--mid {
+  color: #ffd700;
+}
+
+.polymarket-prob--low {
+  color: #ff6b6b;
+}
+
+.polymarket-bar-wrap {
+  width: 100%;
+  height: 3px;
+  background: rgba(var(--primary-rgb), 0.1);
+  margin-top: 3px;
+}
+
+.polymarket-bar {
+  height: 100%;
+  background: var(--primary-color);
+  transition: width 0.5s ease;
+}
+
+.sport-label {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.14em;
+  min-width: 30px;
+}
+
+.sport-score {
+  font-size: 0.65rem;
+  color: var(--primary-color);
+  text-align: right;
+}
+
+.macro-label {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.14em;
+  min-width: 36px;
+}
+
+.macro-value {
+  font-size: 0.72rem;
+  color: var(--primary-color);
+  font-weight: 700;
+  text-shadow: var(--text-glow);
 }
 
 .stat-bar {

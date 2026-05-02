@@ -1,5 +1,8 @@
 import { JarvisOrb } from "./orb.js";
 import { initNews } from "./news.js";
+import { initMacro } from "./macro.js";
+import { initPolymarket } from "./polymarket.js";
+import { initSports } from "./sports.js";
 import { initStocks } from "./stocks.js";
 import { initWeather } from "./weather.js";
 
@@ -253,6 +256,9 @@ async function runBootSequence() {
   initStocks();
   initWeather();
   initNews();
+  initPolymarket();
+  initSports();
+  initMacro();
 }
 
 function bindEvents() {
@@ -311,5 +317,8 @@ window.addEventListener("load", () => {
     initStocks();
     initWeather();
     initNews();
+    initPolymarket();
+    initSports();
+    initMacro();
   });
 });
