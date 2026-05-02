@@ -16,6 +16,10 @@ const bootStatus = document.getElementById("boot-status");
 const bootChecks = document.getElementById("boot-checks");
 const bootWelcome = document.getElementById("boot-welcome");
 const nightModeToggle = document.getElementById("night-mode-toggle");
+const flashOverlay = document.getElementById("flash-overlay");
+const leftPanel = document.querySelector(".left-panel");
+const rightPanel = document.querySelector(".right-panel");
+const orbStage = document.querySelector(".orb-stage");
 
 const BOOT_CHECK_LINES = [
   "NEURAL NETWORK............OK",
@@ -194,33 +198,51 @@ function handleSend(message) {
 
 async function runBootSequence() {
   bootTitle.classList.add("is-visible");
-  await wait(500);
+  await wait(800);
+  bootTitle.classList.add("flicker");
+  await wait(400);
+  bootTitle.classList.remove("flicker");
 
   bootLoading.classList.add("is-visible");
-  for (let progress = 0; progress <= 100; progress += 2) {
+  for (let progress = 0; progress <= 100; progress += 1) {
     bootProgressBar.style.width = `${progress}%`;
     bootProgressText.textContent = `${progress}%`;
-    await wait(20);
+    await wait(30 + Math.floor(Math.random() * 11) - 5);
   }
 
-  bootStatus.classList.add("is-visible");
+  await wait(400);
   bootTitle.classList.remove("is-visible");
+  await wait(500);
+  bootStatus.classList.add("is-visible");
+  await wait(600);
 
   for (const line of BOOT_CHECK_LINES) {
-    await typeBootLine(line, 10);
-    await wait(35);
+    await typeBootLine(line, 18);
+    await wait(80);
   }
 
+  await wait(500);
+  bootChecks.classList.add("is-hidden");
+  await wait(400);
   bootWelcome.classList.add("is-visible");
-  await wait(650);
+  await wait(1800);
 
   mainInterface.classList.add("is-visible");
+  orbStage.classList.add("scale-in");
+  leftPanel.classList.add("slide-in-left");
+  rightPanel.classList.add("slide-in-right");
+
+  flashOverlay.classList.add("is-active");
+  await wait(150);
+  flashOverlay.classList.remove("is-active");
+
   bootOverlay.classList.add("is-hidden");
-  await wait(500);
+  await wait(1000);
 
   orb.playBootReveal();
   playBootTone();
-  await wait(1000);
+  await wait(800);
+  await typewriteMessage("Jarvis", "Welcome back, Christian. J.A.R.V.I.S. is online and standing by.", "jarvis");
   orb.setState("idle");
   bootComplete = true;
 }
@@ -272,6 +294,9 @@ window.addEventListener("load", () => {
   startApp().catch((error) => {
     console.error("Boot sequence failed", error);
     mainInterface.classList.add("is-visible");
+    leftPanel.classList.add("slide-in-left");
+    rightPanel.classList.add("slide-in-right");
+    orbStage.classList.add("scale-in");
     bootOverlay.classList.add("is-hidden");
     bootComplete = true;
     orb.setState("idle");
