@@ -1,6 +1,13 @@
 const STOCK_TICKER_ID = "stock-ticker";
 const STOCK_TICKER_INNER_ID = "stock-ticker-inner";
-const STOCK_REFRESH_MS = 30_000;
+const YAHOO_FALLBACK_MS = 60_000;
+const STOCK_PRICE_EPSILON = 0.01;
+const ALPACA_WEBSOCKET_URL = "wss://stream.data.alpaca.markets/v2/iex";
+const ALPACA_AUTH_MESSAGE = {
+  action: "auth",
+  key: "PKHG7EJZSCQKDTS3E7IVOVL5YY",
+  secret: "6CCM6WQysH5S1nJEyMmSmUUtbH6DMw7SRGbuMTRvu8Y4",
+};
 const STOCK_SYMBOLS = [
   "SPY",
   "QQQ",
@@ -27,6 +34,24 @@ const STOCK_LABELS = new Map([
   ["ETH-USD", "ETH"],
 ]);
 const PRICELESS_SYMBOLS = new Set(["VIX"]);
+const ALPACA_STREAM_SYMBOLS = [
+  "SPY",
+  "QQQ",
+  "NVDA",
+  "TSLA",
+  "AAPL",
+  "AMD",
+  "MSFT",
+  "META",
+  "AMZN",
+  "GOOGL",
+  "JPM",
+  "GS",
+  "BAC",
+  "DIA",
+  "IWM",
+];
+const YAHOO_ONLY_SYMBOLS = new Set(["BTC-USD", "ETH-USD", "VIX"]);
 const PLACEHOLDER_MAP = new Map(
   [
     ["SPY", { price: 722.18, changePercent: 0.52 }],
@@ -51,6 +76,11 @@ const PLACEHOLDER_MAP = new Map(
 );
 const lastKnownStocks = new Map(PLACEHOLDER_MAP);
 let hasInitializedStocks = false;
+let stockStreamSocket = null;
+let stockStreamReconnectTimeoutId = null;
+let stockStreamReconnectDelayMs = 5_000;
+let yahooFallbackIntervalId = null;
+let yahooAllSymbolsIntervalId = null;
 
 function getContainer() {
   return document.getElementById(STOCK_TICKER_ID);
@@ -138,6 +168,10 @@ function renderStocks(stocks) {
   resetTickerAnimation(tickerInner);
 }
 
+function getCurrentStocks() {
+  return STOCK_SYMBOLS.map((symbol) => lastKnownStocks.get(symbol) ?? PLACEHOLDER_MAP.get(symbol)).filter(Boolean);
+}
+
 function extractStockData(symbol, payload) {
   const result = payload?.chart?.result?.[0];
   const meta = result?.meta;
@@ -152,7 +186,62 @@ function extractStockData(symbol, payload) {
   return buildStockRecord(symbol, currentPrice, changePercent);
 }
 
-async function fetchStock(symbol) {
+function getPreviousClose(stock) {
+  if (!stock || !Number.isFinite(stock.price) || !Number.isFinite(stock.changePercent)) {
+    return null;
+  }
+
+  const divisor = 1 + stock.changePercent / 100;
+  if (!Number.isFinite(divisor) || divisor === 0) {
+    return null;
+  }
+
+  const previousClose = stock.price / divisor;
+  return Number.isFinite(previousClose) ? previousClose : null;
+}
+
+function buildTradeRecord(symbol, price) {
+  const currentStock = lastKnownStocks.get(symbol) ?? PLACEHOLDER_MAP.get(symbol);
+  const previousClose = getPreviousClose(currentStock);
+  const changePercent =
+    Number.isFinite(previousClose) && previousClose !== 0
+      ? ((price - previousClose) / previousClose) * 100
+      : currentStock?.changePercent ?? 0;
+
+  return buildStockRecord(symbol, price, changePercent);
+}
+
+function isMeaningfulPriceChange(previousPrice, nextPrice) {
+  if (!Number.isFinite(previousPrice) || !Number.isFinite(nextPrice)) {
+    return true;
+  }
+
+  return Math.abs(nextPrice - previousPrice) > STOCK_PRICE_EPSILON;
+}
+
+function isMarketHours(now = new Date()) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const parts = formatter.formatToParts(now);
+  const values = Object.fromEntries(parts.filter(({ type }) => type !== "literal").map(({ type, value }) => [type, value]));
+  const weekday = values.weekday;
+  const hour = Number.parseInt(values.hour, 10);
+  const minute = Number.parseInt(values.minute, 10);
+
+  if (weekday === "Sat" || weekday === "Sun" || !Number.isFinite(hour) || !Number.isFinite(minute)) {
+    return false;
+  }
+
+  const minutesSinceMidnight = hour * 60 + minute;
+  return minutesSinceMidnight >= 8 * 60 + 30 && minutesSinceMidnight <= 17 * 60;
+}
+
+async function fetchYahooQuote(symbol) {
   const requestSymbol = symbol === "VIX" ? "^VIX" : symbol;
   const response = await fetch(
     `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(requestSymbol)}?interval=1d&range=1d`,
@@ -166,19 +255,171 @@ async function fetchStock(symbol) {
   return extractStockData(symbol, payload);
 }
 
-async function updateStocks() {
-  const results = await Promise.allSettled(STOCK_SYMBOLS.map((symbol) => fetchStock(symbol)));
-  const stocks = results.map((result, index) => {
-    const symbol = STOCK_SYMBOLS[index];
-    if (result.status === "fulfilled") {
-      lastKnownStocks.set(symbol, result.value);
-      return result.value;
+async function fetchYahooFallback(symbol) {
+  if (!YAHOO_ONLY_SYMBOLS.has(symbol)) {
+    throw new Error(`Yahoo fallback not supported for ${symbol}`);
+  }
+
+  return fetchYahooQuote(symbol);
+}
+
+function clearStockStreamReconnect() {
+  if (stockStreamReconnectTimeoutId !== null) {
+    window.clearTimeout(stockStreamReconnectTimeoutId);
+    stockStreamReconnectTimeoutId = null;
+  }
+}
+
+function closeStockStream() {
+  clearStockStreamReconnect();
+  if (stockStreamSocket) {
+    stockStreamSocket.onopen = null;
+    stockStreamSocket.onmessage = null;
+    stockStreamSocket.onerror = null;
+    stockStreamSocket.onclose = null;
+    stockStreamSocket.close();
+    stockStreamSocket = null;
+  }
+}
+
+function scheduleStockStreamReconnect() {
+  if (stockStreamReconnectTimeoutId !== null || !isMarketHours()) {
+    return;
+  }
+
+  stockStreamReconnectTimeoutId = window.setTimeout(() => {
+    stockStreamReconnectTimeoutId = null;
+    connectStockStream();
+  }, stockStreamReconnectDelayMs);
+  stockStreamReconnectDelayMs = Math.min(stockStreamReconnectDelayMs * 2, 30_000);
+}
+
+function handleTradeMessage(message) {
+  const symbol = message?.S;
+  const price = message?.p;
+  if (!ALPACA_STREAM_SYMBOLS.includes(symbol) || !Number.isFinite(price)) {
+    return;
+  }
+
+  const previousStock = lastKnownStocks.get(symbol) ?? PLACEHOLDER_MAP.get(symbol);
+  if (!isMeaningfulPriceChange(previousStock?.price, price)) {
+    return;
+  }
+
+  lastKnownStocks.set(symbol, buildTradeRecord(symbol, price));
+  renderStocks(getCurrentStocks());
+}
+
+function handleStockStreamMessage(event) {
+  let messages;
+
+  try {
+    messages = JSON.parse(event.data);
+  } catch {
+    return;
+  }
+
+  if (!Array.isArray(messages)) {
+    return;
+  }
+
+  messages.forEach((message) => {
+    if (message?.T === "connected") {
+      stockStreamSocket?.send(JSON.stringify(ALPACA_AUTH_MESSAGE));
+      return;
     }
 
-    return lastKnownStocks.get(symbol) ?? PLACEHOLDER_MAP.get(symbol);
+    if (message?.T === "success" && message?.msg === "authenticated") {
+      stockStreamSocket?.send(
+        JSON.stringify({
+          action: "subscribe",
+          trades: ALPACA_STREAM_SYMBOLS,
+        }),
+      );
+      return;
+    }
+
+    if (message?.T === "t") {
+      handleTradeMessage(message);
+    }
+  });
+}
+
+function connectStockStream() {
+  if (!isMarketHours()) {
+    return;
+  }
+
+  closeStockStream();
+
+  try {
+    stockStreamSocket = new WebSocket(ALPACA_WEBSOCKET_URL);
+  } catch {
+    scheduleStockStreamReconnect();
+    return;
+  }
+
+  stockStreamSocket.onopen = () => {
+    stockStreamReconnectDelayMs = 5_000;
+    stockStreamSocket?.send(JSON.stringify(ALPACA_AUTH_MESSAGE));
+  };
+  stockStreamSocket.onmessage = handleStockStreamMessage;
+  stockStreamSocket.onerror = () => {
+    closeStockStream();
+    scheduleStockStreamReconnect();
+  };
+  stockStreamSocket.onclose = () => {
+    stockStreamSocket = null;
+    scheduleStockStreamReconnect();
+  };
+}
+
+async function refreshSymbols(symbols, fetcher) {
+  const results = await Promise.allSettled(symbols.map((symbol) => fetcher(symbol)));
+  let hasPriceChange = false;
+
+  results.forEach((result, index) => {
+    const symbol = symbols[index];
+    if (result.status === "fulfilled") {
+      const previousStock = lastKnownStocks.get(symbol) ?? PLACEHOLDER_MAP.get(symbol);
+      lastKnownStocks.set(symbol, result.value);
+      if (isMeaningfulPriceChange(previousStock?.price, result.value.price)) {
+        hasPriceChange = true;
+      }
+    }
   });
 
-  renderStocks(stocks.filter(Boolean));
+  if (hasPriceChange) {
+    renderStocks(getCurrentStocks());
+  }
+}
+
+function startYahooFallbackPolling() {
+  if (yahooFallbackIntervalId !== null) {
+    return;
+  }
+
+  const refreshFallbackSymbols = () =>
+    refreshSymbols(Array.from(YAHOO_ONLY_SYMBOLS), fetchYahooFallback).catch(() => {
+      renderStocks(getCurrentStocks());
+    });
+
+  refreshFallbackSymbols();
+  yahooFallbackIntervalId = window.setInterval(refreshFallbackSymbols, YAHOO_FALLBACK_MS);
+}
+
+function startYahooAllSymbolsPolling() {
+  if (yahooAllSymbolsIntervalId !== null) {
+    return;
+  }
+
+  const refreshAllSymbols = () =>
+    refreshSymbols(STOCK_SYMBOLS, fetchYahooQuote).catch(() => {
+      renderStocks(getCurrentStocks());
+    });
+
+  refreshAllSymbols();
+  yahooAllSymbolsIntervalId = window.setInterval(refreshAllSymbols, YAHOO_FALLBACK_MS);
 }
 
 export function initStocks() {
@@ -187,17 +428,14 @@ export function initStocks() {
   }
 
   hasInitializedStocks = true;
-  const initialStocks = STOCK_SYMBOLS.map((symbol) => lastKnownStocks.get(symbol) ?? PLACEHOLDER_MAP.get(symbol)).filter(Boolean);
+  const initialStocks = getCurrentStocks();
   renderStocks(initialStocks);
-  updateStocks().catch(() => {
-    renderStocks(initialStocks);
-  });
-  window.setInterval(() => {
-    updateStocks().catch(() => {
-      const fallbackStocks = STOCK_SYMBOLS.map(
-        (symbol) => lastKnownStocks.get(symbol) ?? PLACEHOLDER_MAP.get(symbol),
-      ).filter(Boolean);
-      renderStocks(fallbackStocks);
-    });
-  }, STOCK_REFRESH_MS);
+
+  if (isMarketHours()) {
+    connectStockStream();
+    startYahooFallbackPolling();
+    return;
+  }
+
+  startYahooAllSymbolsPolling();
 }
