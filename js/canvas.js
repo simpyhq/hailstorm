@@ -1,6 +1,4 @@
-const CANVAS_TOKEN =
-  "8808~rB2MKzrrZcJUNHFkhAcCRBAmWYRLBGFZNChERaQDwLWzeYcVMDR42kYmantZ3PNw";
-const CANVAS_URL = "https://canvas.ou.edu/api/v1/users/self/upcoming_events?per_page=10";
+const CANVAS_URL = "/api/canvas-events";
 const REFRESH_INTERVAL_MS = 30 * 60 * 1000;
 
 function truncateTitle(title) {
@@ -65,11 +63,7 @@ function renderAssignments(listEl, assignments) {
 }
 
 async function fetchAssignments() {
-  const response = await fetch(CANVAS_URL, {
-    headers: {
-      Authorization: `Bearer ${CANVAS_TOKEN}`,
-    },
-  });
+  const response = await fetch(CANVAS_URL);
 
   if (!response.ok) {
     throw new Error(`Canvas request failed: ${response.status}`);

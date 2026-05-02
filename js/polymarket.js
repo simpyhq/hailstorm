@@ -1,5 +1,5 @@
 const POLYMARKET_URL =
-  "https://gamma-api.polymarket.com/markets?limit=10&active=true&closed=false&order=volume&ascending=false";
+  "/api/polymarket";
 const POLYMARKET_REFRESH_MS = 300_000;
 
 let polymarketIntervalId = null;
