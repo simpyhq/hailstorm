@@ -1,6 +1,5 @@
 const POLYMARKET_URL =
   "https://gamma-api.polymarket.com/markets?limit=10&active=true&closed=false&order=volume&ascending=false";
-const POLYMARKET_PROXY_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(POLYMARKET_URL)}`;
 const POLYMARKET_REFRESH_MS = 300_000;
 
 let polymarketIntervalId = null;
@@ -135,7 +134,7 @@ function renderMarkets(markets) {
 
 async function updatePolymarket() {
   try {
-    const response = await fetch(POLYMARKET_PROXY_URL);
+    const response = await fetch(POLYMARKET_URL);
     if (!response.ok) {
       throw new Error("Polymarket request failed");
     }

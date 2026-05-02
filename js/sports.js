@@ -1,5 +1,4 @@
 const SPORTS_REFRESH_MS = 600_000;
-const ESPN_PROXY_BASE = "https://api.allorigins.win/raw?url=";
 const TEAM_CONFIG = [
   {
     elementId: "rangers-score",
@@ -130,7 +129,7 @@ function selectRelevantEvent(events) {
 
 async function fetchTeamSummary(config) {
   try {
-    const response = await fetch(`${ESPN_PROXY_BASE}${encodeURIComponent(config.url)}`);
+    const response = await fetch(config.url);
     if (!response.ok) {
       throw new Error("ESPN request failed");
     }

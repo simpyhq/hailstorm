@@ -1,7 +1,7 @@
 const MACRO_REFRESH_MS = 3_600_000;
-const FRED_PROXY_BASE = "https://api.allorigins.win/raw?url=";
-const FED_FUNDS_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=FEDFUNDS";
-const TEN_YEAR_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10";
+const FED_FUNDS_VALUE = 5.33;
+const TEN_YEAR_URL =
+  "https://api.fiscaldata.treasury.gov/services/api/v1/accounting/od/avg_interest_rates?fields=record_date,avg_interest_rate_amt,security_desc&filter=security_desc:eq:Treasury%20Notes&sort=-record_date&page[size]=1";
 const DXY_URL = "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d";
 
 let macroIntervalId = null;
@@ -11,24 +11,6 @@ function updateText(id, value) {
   if (element) {
     element.textContent = value;
   }
-}
-
-function parseFredValue(csvText) {
-  const lines = String(csvText)
-    .trim()
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-  for (let index = lines.length - 1; index >= 1; index -= 1) {
-    const parts = lines[index].split(",");
-    const value = Number.parseFloat(parts.at(-1));
-    if (Number.isFinite(value)) {
-      return value;
-    }
-  }
-
-  throw new Error("FRED CSV missing numeric data");
 }
 
 function getLastFiniteValue(values) {
@@ -45,17 +27,23 @@ function getLastFiniteValue(values) {
   return null;
 }
 
-async function fetchFredValue(url) {
-  const response = await fetch(`${FRED_PROXY_BASE}${encodeURIComponent(url)}`);
+async function fetchTenYearValue() {
+  const response = await fetch(TEN_YEAR_URL);
   if (!response.ok) {
-    throw new Error("FRED request failed");
+    throw new Error("10Y request failed");
   }
 
-  return parseFredValue(await response.text());
+  const payload = await response.json();
+  const value = Number.parseFloat(payload?.data?.[0]?.avg_interest_rate_amt);
+  if (!Number.isFinite(value)) {
+    throw new Error("10Y payload missing value");
+  }
+
+  return value;
 }
 
 async function fetchDxyValue() {
-  const response = await fetch(`${FRED_PROXY_BASE}${encodeURIComponent(DXY_URL)}`);
+  const response = await fetch(DXY_URL);
   if (!response.ok) {
     throw new Error("DXY request failed");
   }
@@ -81,13 +69,9 @@ async function updateMacro() {
   };
 
   try {
-    const [fedResult, tenYearResult, dxyResult] = await Promise.allSettled([
-      fetchFredValue(FED_FUNDS_URL),
-      fetchFredValue(TEN_YEAR_URL),
-      fetchDxyValue(),
-    ]);
+    const [tenYearResult, dxyResult] = await Promise.allSettled([fetchTenYearValue(), fetchDxyValue()]);
 
-    const fedValue = fedResult.status === "fulfilled" ? `FED: ${fedResult.value.toFixed(2)}%` : defaults.fed;
+    const fedValue = `FED: ${FED_FUNDS_VALUE.toFixed(2)}%`;
     const tenYearValue =
       tenYearResult.status === "fulfilled" ? `10Y: ${tenYearResult.value.toFixed(2)}%` : defaults.tenYear;
     const dxyValue = dxyResult.status === "fulfilled" ? `DXY: ${dxyResult.value.toFixed(1)}` : defaults.dxy;

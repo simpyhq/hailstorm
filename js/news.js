@@ -2,15 +2,15 @@ const NEWS_REFRESH_MS = 900_000;
 const FEEDS = [
   {
     source: "FOX BUSINESS",
-    url: `https://api.allorigins.win/get?url=${encodeURIComponent("https://feeds.foxbusiness.com/foxbusiness/latest")}`,
+    url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Ffeeds.foxbusiness.com%2Ffoxbusiness%2Flatest",
   },
   {
     source: "NY POST",
-    url: `https://api.allorigins.win/get?url=${encodeURIComponent("https://nypost.com/business/feed/")}`,
+    url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnypost.com%2Fbusiness%2Ffeed%2F",
   },
   {
     source: "WASHINGTON EXAMINER",
-    url: `https://api.allorigins.win/get?url=${encodeURIComponent("https://www.washingtonexaminer.com/feed")}`,
+    url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.washingtonexaminer.com%2Ffeed",
   },
 ];
 
@@ -26,13 +26,13 @@ function normalizeHeadline(text) {
   return text.replace(/\s+/g, " ").trim();
 }
 
-function extractItems(source, xmlText) {
-  const parser = new DOMParser();
-  const xml = parser.parseFromString(xmlText, "text/xml");
-  const items = Array.from(xml.querySelectorAll("item"));
+function extractItems(source, items) {
+  if (!Array.isArray(items)) {
+    return [];
+  }
 
   return items.slice(0, 5).flatMap((item) => {
-    const title = normalizeHeadline(item.querySelector("title")?.textContent ?? "");
+    const title = normalizeHeadline(item?.title ?? "");
     if (!title) {
       return [];
     }
@@ -48,12 +48,11 @@ async function fetchFeed(feed) {
   }
 
   const payload = await response.json();
-  const xmlText = payload?.contents;
-  if (typeof xmlText !== "string" || !xmlText.trim()) {
-    throw new Error(`Feed payload missing XML for ${feed.source}`);
+  if (payload?.status !== "ok" || !Array.isArray(payload?.items)) {
+    throw new Error(`Feed payload missing items for ${feed.source}`);
   }
 
-  return extractItems(feed.source, xmlText);
+  return extractItems(feed.source, payload.items);
 }
 
 function renderNewsTicker(headlines) {
