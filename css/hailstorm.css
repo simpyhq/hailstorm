@@ -145,6 +145,10 @@ body.night-mode .main-interface {
   animation: boot-title-flicker 0.4s linear;
 }
 
+.boot-title.is-fading-out {
+  transition: opacity 0.5s ease, color 1s ease, text-shadow 1s ease;
+}
+
 .boot-loading,
 .boot-status,
 .boot-welcome {
@@ -153,6 +157,7 @@ body.night-mode .main-interface {
 
 .boot-loading {
   width: min(420px, 100%);
+  transition: opacity 0.4s ease, color 1s ease, text-shadow 1s ease;
 }
 
 .boot-loading__bar {
@@ -317,6 +322,17 @@ body.night-mode .main-interface {
   gap: 12px;
 }
 
+.top-bar__stocks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0 18px;
+}
+
 .clock-readout {
   font-size: 1rem;
   font-weight: 700;
@@ -332,6 +348,34 @@ body.night-mode .main-interface {
 .top-bar__right {
   display: flex;
   gap: 12px;
+}
+
+.stock-chip {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border: 1px solid rgba(var(--primary-rgb), 0.24);
+  background: rgba(4, 10, 20, 0.72);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  box-shadow: inset 0 0 10px rgba(var(--primary-rgb), 0.08);
+}
+
+.stock-chip--up {
+  color: var(--ok-color);
+  border-color: rgba(var(--ok-rgb), 0.28);
+  box-shadow:
+    inset 0 0 10px rgba(var(--ok-rgb), 0.08),
+    0 0 12px rgba(var(--ok-rgb), 0.08);
+}
+
+.stock-chip--down {
+  color: var(--gold);
+  border-color: rgba(var(--gold-rgb), 0.34);
+  box-shadow:
+    inset 0 0 10px rgba(var(--gold-rgb), 0.08),
+    0 0 12px rgba(var(--gold-rgb), 0.08);
 }
 
 .status-pill {
@@ -439,6 +483,36 @@ body.night-mode .main-interface {
   display: flex;
   justify-content: space-between;
   gap: 10px;
+}
+
+.weather-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.weather-temp {
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--primary-color);
+  text-shadow: var(--text-glow);
+}
+
+.weather-condition {
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  color: var(--ok-color);
+}
+
+.weather-meta,
+.weather-location {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+}
+
+.weather-location {
+  margin-top: 4px;
 }
 
 .widget-icon {
@@ -852,9 +926,20 @@ body.night-mode .main-interface {
     width: 100%;
     justify-content: center;
   }
+
+  .top-bar__stocks {
+    order: 4;
+    width: 100%;
+    margin: 0;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 640px) {
+  .top-bar__stocks {
+    display: none;
+  }
+
   .top-bar__right {
     flex-wrap: wrap;
     justify-content: flex-end;

@@ -1,4 +1,7 @@
 import { JarvisOrb } from "./orb.js";
+import { initNews } from "./news.js";
+import { initStocks } from "./stocks.js";
+import { initWeather } from "./weather.js";
 
 const clockEl = document.getElementById("clock");
 const dateEl = document.getElementById("date");
@@ -211,8 +214,10 @@ async function runBootSequence() {
   }
 
   await wait(400);
+  bootTitle.classList.add("is-fading-out");
   bootTitle.classList.remove("is-visible");
   await wait(500);
+  bootTitle.classList.remove("is-fading-out");
   bootStatus.classList.add("is-visible");
   await wait(600);
 
@@ -245,6 +250,9 @@ async function runBootSequence() {
   await typewriteMessage("Jarvis", "Welcome back, Christian. J.A.R.V.I.S. is online and standing by.", "jarvis");
   orb.setState("idle");
   bootComplete = true;
+  initStocks();
+  initWeather();
+  initNews();
 }
 
 function bindEvents() {

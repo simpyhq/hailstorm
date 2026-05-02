@@ -40,6 +40,14 @@
           <div id="clock" class="clock-readout">00:00:00</div>
           <div id="date" class="date-readout">0000-00-00</div>
         </div>
+        <div id="stock-ticker" class="top-bar__stocks" aria-label="Market ticker">
+          <span class="stock-chip stock-chip--up">SPY 518.18 ▲+0.52%</span>
+          <span class="stock-chip stock-chip--up">QQQ 441.27 ▲+0.63%</span>
+          <span class="stock-chip stock-chip--up">NVDA 903.12 ▲+1.14%</span>
+          <span class="stock-chip stock-chip--down">AAPL 182.44 ▼-0.31%</span>
+          <span class="stock-chip stock-chip--up">AMD 164.70 ▲+0.47%</span>
+          <span class="stock-chip stock-chip--up">BTC 63482.90 ▲+1.92%</span>
+        </div>
         <div class="top-bar__right">
           <div class="status-pill">
             <span class="status-dot"></span>
@@ -63,9 +71,12 @@
       <aside class="left-panel">
         <section class="hud-widget">
           <h2>WEATHER</h2>
-          <div class="widget-grid">
-            <div class="widget-icon">[ICON]</div>
-            <div class="widget-value">72°F / CLEAR</div>
+          <div class="weather-widget">
+            <div id="weather-temp" class="weather-temp">72°F</div>
+            <div id="weather-condition" class="weather-condition">CLEAR</div>
+            <div id="weather-highlow" class="weather-meta">High: 78° Low: 61°</div>
+            <div id="weather-wind" class="weather-meta">Wind: 12 mph</div>
+            <div id="weather-location" class="weather-location">NORMAN, OK</div>
           </div>
         </section>
 
@@ -174,13 +185,13 @@
 
       <footer class="hud-bar bottom-bar">
         <div class="ticker-mask">
-          <div class="ticker-track">
-            <div class="ticker-copy">
+          <div id="news-ticker-track" class="ticker-track">
+            <div id="news-ticker-copy-a" class="ticker-copy">
               MARKET UPDATE: SPY +0.5% | QQQ +0.7% | BREAKING: Markets rally on strong jobs data
               | RANGERS: Season update | COWBOYS: Offseason news | POLYMARKET: Election odds
               shifting
             </div>
-            <div class="ticker-copy" aria-hidden="true">
+            <div id="news-ticker-copy-b" class="ticker-copy" aria-hidden="true">
               MARKET UPDATE: SPY +0.5% | QQQ +0.7% | BREAKING: Markets rally on strong jobs data
               | RANGERS: Season update | COWBOYS: Offseason news | POLYMARKET: Election odds
               shifting
