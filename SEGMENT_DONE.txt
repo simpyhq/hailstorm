@@ -1,1 +1,1 @@
-cors-fix-complete
+quick-fixes-complete

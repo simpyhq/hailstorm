@@ -41,6 +41,8 @@ const BOOT_CHECK_LINES = [
 const orb = new JarvisOrb(canvas);
 
 let bootComplete = false;
+let bootSkipped = false;
+let systemsInitialized = false;
 let isNightMode = false;
 
 function wait(ms) {
@@ -132,6 +134,12 @@ function typeBootLine(text, speed = 12) {
   return new Promise((resolve) => {
     let index = 0;
     const timer = window.setInterval(() => {
+      if (bootSkipped) {
+        window.clearInterval(timer);
+        resolve();
+        return;
+      }
+
       line.textContent = `> ${text.slice(0, index + 1)}`;
       index += 1;
       if (index >= text.length) {
@@ -174,6 +182,44 @@ function playBootTone() {
   });
 }
 
+function revealMainInterface() {
+  mainInterface.classList.add("is-visible");
+  orbStage.classList.add("scale-in");
+  leftPanel.classList.add("slide-in-left");
+  rightPanel.classList.add("slide-in-right");
+}
+
+function initSystems() {
+  if (systemsInitialized) {
+    return;
+  }
+
+  systemsInitialized = true;
+  initStocks();
+  initWeather();
+  initNews();
+  initPolymarket();
+  initSports();
+  initMacro();
+  initCanvas();
+  initBruce();
+  initInternships();
+}
+
+function skipBoot() {
+  if (bootComplete || bootSkipped) {
+    return;
+  }
+
+  bootSkipped = true;
+  bootOverlay.style.transition = "opacity 0.3s ease";
+  bootOverlay.classList.add("is-hidden");
+  revealMainInterface();
+  bootComplete = true;
+  orb.setState("idle");
+  initSystems();
+}
+
 function applyNightMode(enabled) {
   isNightMode = enabled;
   document.body.classList.toggle("night-mode", enabled);
@@ -208,8 +254,14 @@ function handleSend(message) {
 async function runBootSequence() {
   bootTitle.classList.add("is-visible");
   await wait(800);
+  if (bootSkipped) {
+    return;
+  }
   bootTitle.classList.add("flicker");
   await wait(400);
+  if (bootSkipped) {
+    return;
+  }
   bootTitle.classList.remove("flicker");
 
   bootLoading.classList.add("is-visible");
@@ -217,54 +269,82 @@ async function runBootSequence() {
     bootProgressBar.style.width = `${progress}%`;
     bootProgressText.textContent = `${progress}%`;
     await wait(30 + Math.floor(Math.random() * 11) - 5);
+    if (bootSkipped) {
+      return;
+    }
   }
 
   await wait(400);
+  if (bootSkipped) {
+    return;
+  }
   bootTitle.classList.add("is-fading-out");
   bootTitle.classList.remove("is-visible");
   await wait(500);
+  if (bootSkipped) {
+    return;
+  }
   bootTitle.classList.remove("is-fading-out");
   bootStatus.classList.add("is-visible");
   await wait(600);
+  if (bootSkipped) {
+    return;
+  }
 
   for (const line of BOOT_CHECK_LINES) {
     await typeBootLine(line, 18);
+    if (bootSkipped) {
+      return;
+    }
     await wait(80);
+    if (bootSkipped) {
+      return;
+    }
   }
 
   await wait(500);
+  if (bootSkipped) {
+    return;
+  }
   bootChecks.classList.add("is-hidden");
   await wait(400);
+  if (bootSkipped) {
+    return;
+  }
   bootWelcome.classList.add("is-visible");
   await wait(1800);
+  if (bootSkipped) {
+    return;
+  }
 
-  mainInterface.classList.add("is-visible");
-  orbStage.classList.add("scale-in");
-  leftPanel.classList.add("slide-in-left");
-  rightPanel.classList.add("slide-in-right");
+  revealMainInterface();
 
   flashOverlay.classList.add("is-active");
   await wait(150);
+  if (bootSkipped) {
+    return;
+  }
   flashOverlay.classList.remove("is-active");
 
   bootOverlay.classList.add("is-hidden");
   await wait(1000);
+  if (bootSkipped) {
+    return;
+  }
 
   orb.playBootReveal();
   playBootTone();
   await wait(800);
+  if (bootSkipped) {
+    return;
+  }
   await typewriteMessage("Jarvis", "Welcome back, Christian. J.A.R.V.I.S. is online and standing by.", "jarvis");
+  if (bootSkipped) {
+    return;
+  }
   orb.setState("idle");
   bootComplete = true;
-  initStocks();
-  initWeather();
-  initNews();
-  initPolymarket();
-  initSports();
-  initMacro();
-  initCanvas();
-  initBruce();
-  initInternships();
+  initSystems();
 }
 
 function bindEvents() {
@@ -291,6 +371,11 @@ function bindEvents() {
   });
 
   document.addEventListener("keydown", (event) => {
+    if (!bootComplete && event.key === "Escape") {
+      skipBoot();
+      return;
+    }
+
     if (event.code === "Space" && event.target !== chatText) {
       event.preventDefault();
       toggleListening();
@@ -299,6 +384,7 @@ function bindEvents() {
 
   canvas.addEventListener("click", toggleListening);
   nightModeToggle.addEventListener("click", () => applyNightMode(!isNightMode));
+  document.getElementById("boot-skip")?.addEventListener("click", skipBoot);
 }
 
 async function startApp() {
@@ -313,21 +399,10 @@ async function startApp() {
 window.addEventListener("load", () => {
   startApp().catch((error) => {
     console.error("Boot sequence failed", error);
-    mainInterface.classList.add("is-visible");
-    leftPanel.classList.add("slide-in-left");
-    rightPanel.classList.add("slide-in-right");
-    orbStage.classList.add("scale-in");
+    revealMainInterface();
     bootOverlay.classList.add("is-hidden");
     bootComplete = true;
     orb.setState("idle");
-    initStocks();
-    initWeather();
-    initNews();
-    initPolymarket();
-    initSports();
-    initMacro();
-    initCanvas();
-    initBruce();
-    initInternships();
+    initSystems();
   });
 });

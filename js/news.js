@@ -12,6 +12,14 @@ const FEEDS = [
     source: "WASHINGTON EXAMINER",
     url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.washingtonexaminer.com%2Ffeed",
   },
+  {
+    source: "HEALTH",
+    url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fpubmed.ncbi.nlm.nih.gov%2Frss%2Fsearch%2F%3Fterm%3DIgA%2BNephropathy%26format%3Drss",
+  },
+  {
+    source: "MEDICAL",
+    url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Frss.medicalnewstoday.com%2Fnews.xml",
+  },
 ];
 
 function getTickerElements() {
@@ -37,7 +45,10 @@ function extractItems(source, items) {
       return [];
     }
 
-    return `${source}: ${title}`;
+    return {
+      text: `${source}: ${title}`,
+      url: typeof item?.link === "string" ? item.link : "",
+    };
   });
 }
 
@@ -55,15 +66,36 @@ async function fetchFeed(feed) {
   return extractItems(feed.source, payload.items);
 }
 
+function buildTickerCopy(items) {
+  const fragment = document.createDocumentFragment();
+
+  items.forEach((item) => {
+    if (item.url) {
+      const link = document.createElement("a");
+      link.href = item.url;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.className = "ticker-link";
+      link.textContent = item.text;
+      fragment.appendChild(link);
+    } else {
+      fragment.appendChild(document.createTextNode(item.text));
+    }
+
+    fragment.appendChild(document.createTextNode(" | "));
+  });
+
+  return fragment;
+}
+
 function renderNewsTicker(headlines) {
   const { track, copyA, copyB } = getTickerElements();
   if (!track || !copyA || !copyB || headlines.length === 0) {
     return;
   }
 
-  const tickerText = `${headlines.join(" | ")} |`;
-  copyA.textContent = tickerText;
-  copyB.textContent = tickerText;
+  copyA.replaceChildren(buildTickerCopy(headlines));
+  copyB.replaceChildren(buildTickerCopy(headlines));
 
   track.style.animation = "none";
   void track.offsetWidth;
