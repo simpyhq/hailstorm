@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Hailstorm | J.A.R.V.I.S.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/hailstorm.css" />
+  </head>
+  <body class="hailstorm-shell min-h-screen overflow-hidden">
+    <div id="boot-overlay" class="boot-overlay" aria-hidden="true">
+      <div class="boot-sequence">
+        <div id="boot-title" class="boot-title">INITIALIZING J.A.R.V.I.S.</div>
+        <div class="boot-loading">
+          <div class="boot-loading__bar">
+            <div id="boot-progress-bar" class="boot-loading__fill"></div>
+          </div>
+          <div id="boot-progress-text" class="boot-loading__text">0%</div>
+        </div>
+        <div id="boot-status" class="boot-status">ALL SYSTEMS ONLINE</div>
+        <div id="boot-checks" class="boot-checks"></div>
+        <div id="boot-welcome" class="boot-welcome">WELCOME, CHRISTIAN</div>
+      </div>
+    </div>
+
+    <div id="main-interface" class="main-interface">
+      <div class="scanline-overlay" aria-hidden="true"></div>
+
+      <header class="hud-bar top-bar">
+        <div class="top-bar__left">
+          <span class="jarvis-logo">J.A.R.V.I.S.</span>
+        </div>
+        <div class="top-bar__center">
+          <div id="clock" class="clock-readout">00:00:00</div>
+          <div id="date" class="date-readout">0000-00-00</div>
+        </div>
+        <div class="top-bar__right">
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            <span>SYSTEM</span>
+          </div>
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            <span>NETWORK</span>
+          </div>
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            <span>VOICE</span>
+          </div>
+          <button id="night-mode-toggle" class="night-mode-toggle" type="button" aria-pressed="false">
+            NM
+          </button>
+        </div>
+      </header>
+
+      <main class="main-frame">
+      <aside class="left-panel">
+        <section class="hud-widget">
+          <h2>WEATHER</h2>
+          <div class="widget-grid">
+            <div class="widget-icon">[ICON]</div>
+            <div class="widget-value">72°F / CLEAR</div>
+          </div>
+        </section>
+
+        <section class="hud-widget">
+          <h2>SYSTEM STATS</h2>
+          <div class="stat-row">
+            <span>CPU</span>
+            <div class="stat-bar"><div class="stat-bar__fill" style="width: 45%"></div></div>
+            <span>45%</span>
+          </div>
+          <div class="stat-row">
+            <span>RAM</span>
+            <div class="stat-bar"><div class="stat-bar__fill" style="width: 62%"></div></div>
+            <span>62%</span>
+          </div>
+          <div class="stat-row">
+            <span>DISK</span>
+            <div class="stat-bar"><div class="stat-bar__fill" style="width: 38%"></div></div>
+            <span>38%</span>
+          </div>
+        </section>
+
+        <section class="hud-widget">
+          <h2>CANVAS</h2>
+          <div class="widget-list">
+            <div><span>PHYSICS LAB</span><span>DUE 05/03</span></div>
+            <div><span>ECON PAPER</span><span>DUE 05/05</span></div>
+            <div><span>ML QUIZ</span><span>DUE 05/07</span></div>
+          </div>
+        </section>
+
+        <section class="hud-widget">
+          <h2>POLYMARKET</h2>
+          <div class="widget-list">
+            <div><span>RATE CUT JUNE</span><span>41%</span></div>
+            <div><span>BTC &gt; 90K</span><span>58%</span></div>
+            <div><span>ELECTION SHIFT</span><span>52%</span></div>
+          </div>
+        </section>
+
+        <section class="hud-widget">
+          <h2>DALLAS SPORTS</h2>
+          <div class="widget-list">
+            <div><span>RANGERS</span><span>SEASON TRACKING</span></div>
+          </div>
+        </section>
+
+        <section class="hud-widget">
+          <h2>MACRO</h2>
+          <div class="widget-list">
+            <div><span>FED RATE</span><span>5.25%</span></div>
+            <div><span>10Y YIELD</span><span>4.48%</span></div>
+            <div><span>DXY</span><span>104.2</span></div>
+          </div>
+        </section>
+
+        <section class="hud-widget">
+          <h2>INTERNSHIPS</h2>
+          <div class="widget-list">
+            <div><span>ACTIVE TRACKING</span><span>12 OPEN</span></div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="center-panel">
+        <div class="orb-stage">
+          <canvas id="jarvis-orb" width="600" height="600" aria-label="Jarvis Orb"></canvas>
+          <div class="center-copy">
+            <h1>J.A.R.V.I.S.</h1>
+            <p class="status-line">SYSTEM ONLINE</p>
+            <button id="mission-control" type="button">MISSION CONTROL</button>
+          </div>
+          <div class="speak-hint">PRESS SPACE TO SPEAK</div>
+        </div>
+      </section>
+
+      <aside class="right-panel">
+        <div class="chat-shell">
+          <div class="chat-header">NEURAL INTERFACE</div>
+          <div id="chat-history" class="chat-history">
+            <div class="chat-message jarvis">
+              <div class="chat-author">Jarvis</div>
+              <div class="chat-bubble">Good evening, Christian. All systems are online.</div>
+            </div>
+            <div class="chat-message user">
+              <div class="chat-author">User</div>
+              <div class="chat-bubble">Run diagnostics.</div>
+            </div>
+            <div class="chat-message jarvis">
+              <div class="chat-author">Jarvis</div>
+              <div class="chat-bubble">All systems nominal. Standing by.<span class="cursor"></span></div>
+            </div>
+          </div>
+          <form id="chat-form" class="chat-input" autocomplete="off">
+            <input
+              id="chat-text"
+              type="text"
+              placeholder="Issue command..."
+              aria-label="Chat input"
+            />
+            <button type="submit">SEND</button>
+          </form>
+        </div>
+      </aside>
+      </main>
+
+      <footer class="hud-bar bottom-bar">
+        <div class="ticker-mask">
+          <div class="ticker-track">
+            <div class="ticker-copy">
+              MARKET UPDATE: SPY +0.5% | QQQ +0.7% | BREAKING: Markets rally on strong jobs data
+              | RANGERS: Season update | COWBOYS: Offseason news | POLYMARKET: Election odds
+              shifting
+            </div>
+            <div class="ticker-copy" aria-hidden="true">
+              MARKET UPDATE: SPY +0.5% | QQQ +0.7% | BREAKING: Markets rally on strong jobs data
+              | RANGERS: Season update | COWBOYS: Offseason news | POLYMARKET: Election odds
+              shifting
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>
