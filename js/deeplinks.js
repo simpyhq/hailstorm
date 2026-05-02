@@ -73,8 +73,12 @@ export const APPS = {
 
 /**
  * Open a deep link smartly.
- * On mobile: try the app scheme, fall back to App Store / Play Store / web after 1.5s.
+ * On mobile: try the app scheme, fall back to App Store / Play Store / web after delay.
  * On desktop: go straight to the web URL.
+ *
+ * iOS-specific: uses a hidden iframe to attempt the URI scheme so Safari
+ * doesn't open a new tab or show a "Leave Page?" prompt. Falls back to
+ * App Store after 2s if the app isn't installed.
  *
  * @param {keyof APPS} appKey  - Key from APPS registry
  * @param {string} [webOverride] - Optional specific web URL override
@@ -101,36 +105,46 @@ export function openLink(appKey, webOverride) {
     return;
   }
 
-  // Universal links (https://) — just open directly, no fallback needed
+  // Universal links (https://) — open directly, no scheme tricks needed
   if (scheme.startsWith("https://") || scheme.startsWith("http://")) {
     window.open(scheme, "_blank");
     return;
   }
 
-  // Try native app scheme, fall back after 1.5s if app not installed
-  const fallback = isIOS
-    ? (app.appStore || webUrl)
-    : (app.playStore || webUrl);
+  const fallback = isIOS ? (app.appStore || webUrl) : (app.playStore || webUrl);
 
-  const fallbackTimer = setTimeout(() => {
-    window.open(fallback, "_blank");
-  }, 1500);
+  if (isIOS) {
+    // iOS: hidden iframe approach — doesn't open a new tab or trigger prompts.
+    // If the app is installed, iOS intercepts the scheme and opens it.
+    // If not, nothing happens and we fall back to App Store after 2s.
+    const iframe = document.createElement("iframe");
+    iframe.style.cssText = "position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;";
+    iframe.src = scheme;
+    document.body.appendChild(iframe);
 
-  // If page loses focus, app opened — cancel fallback
-  window.addEventListener(
-    "blur",
-    () => clearTimeout(fallbackTimer),
-    { once: true }
-  );
-  window.addEventListener(
-    "visibilitychange",
-    () => {
-      if (document.hidden) clearTimeout(fallbackTimer);
-    },
-    { once: true }
-  );
+    const fallbackTimer = setTimeout(() => {
+      document.body.removeChild(iframe);
+      window.location.href = fallback;
+    }, 2000);
 
-  window.location.href = scheme;
+    // If app opened, page will hide — cancel the fallback
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+        if (document.hidden) {
+          clearTimeout(fallbackTimer);
+          // Clean up iframe after a moment
+          setTimeout(() => {
+            if (document.body.contains(iframe)) document.body.removeChild(iframe);
+          }, 500);
+        }
+      },
+      { once: true }
+    );
+  } else {
+    // Android: intent URIs handle fallback natively, just navigate
+    window.location.href = scheme;
+  }
 }
 
 /**
