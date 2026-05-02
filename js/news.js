@@ -2,15 +2,15 @@ const NEWS_REFRESH_MS = 900_000;
 const FEEDS = [
   {
     source: "FOX BUSINESS",
-    url: "https://api.allorigins.win/get?url=https://feeds.foxbusiness.com/foxbusiness/latest",
+    url: `https://api.allorigins.win/get?url=${encodeURIComponent("https://feeds.foxbusiness.com/foxbusiness/latest")}`,
   },
   {
     source: "NY POST",
-    url: "https://api.allorigins.win/get?url=https://nypost.com/business/feed/",
+    url: `https://api.allorigins.win/get?url=${encodeURIComponent("https://nypost.com/business/feed/")}`,
   },
   {
     source: "WASHINGTON EXAMINER",
-    url: "https://api.allorigins.win/get?url=https://www.washingtonexaminer.com/feed",
+    url: `https://api.allorigins.win/get?url=${encodeURIComponent("https://www.washingtonexaminer.com/feed")}`,
   },
 ];
 

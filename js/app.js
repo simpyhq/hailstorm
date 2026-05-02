@@ -308,5 +308,8 @@ window.addEventListener("load", () => {
     bootOverlay.classList.add("is-hidden");
     bootComplete = true;
     orb.setState("idle");
+    initStocks();
+    initWeather();
+    initNews();
   });
 });

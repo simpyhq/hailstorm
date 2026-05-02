@@ -325,12 +325,28 @@ body.night-mode .main-interface {
 .top-bar__stocks {
   display: flex;
   align-items: center;
-  gap: 8px;
   min-width: 0;
   flex: 1;
+  margin: 0;
+}
+
+.stock-ticker-strip {
+  position: relative;
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
+  margin: 0 16px;
+}
+
+.stock-ticker-inner {
+  display: inline-flex;
+  width: max-content;
   white-space: nowrap;
-  margin: 0 18px;
+  will-change: transform;
+}
+
+.stock-ticker-inner.is-animating {
+  animation: stock-scroll 60s linear infinite;
 }
 
 .clock-readout {
@@ -350,32 +366,51 @@ body.night-mode .main-interface {
   gap: 12px;
 }
 
-.stock-chip {
+.stock-ticker-chip {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  margin-right: 8px;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  border-radius: 4px;
   flex: 0 0 auto;
-  padding: 5px 9px;
-  border: 1px solid rgba(var(--primary-rgb), 0.24);
-  background: rgba(4, 10, 20, 0.72);
-  font-size: 0.58rem;
-  letter-spacing: 0.14em;
-  box-shadow: inset 0 0 10px rgba(var(--primary-rgb), 0.08);
 }
 
-.stock-chip--up {
-  color: var(--ok-color);
-  border-color: rgba(var(--ok-rgb), 0.28);
-  box-shadow:
-    inset 0 0 10px rgba(var(--ok-rgb), 0.08),
-    0 0 12px rgba(var(--ok-rgb), 0.08);
+.stock-ticker-chip__symbol,
+.stock-ticker-chip__value {
+  display: inline-block;
 }
 
-.stock-chip--down {
-  color: var(--gold);
-  border-color: rgba(var(--gold-rgb), 0.34);
+.stock-ticker-chip__symbol {
+  text-shadow: 0 0 8px rgba(var(--primary-rgb), 0.18);
+}
+
+.stock-ticker-chip--options {
+  color: #00d4ff;
+  border: 1px solid rgba(0, 212, 255, 0.5);
+  background: rgba(0, 212, 255, 0.08);
   box-shadow:
-    inset 0 0 10px rgba(var(--gold-rgb), 0.08),
-    0 0 12px rgba(var(--gold-rgb), 0.08);
+    0 0 10px rgba(0, 212, 255, 0.2),
+    inset 0 0 8px rgba(0, 212, 255, 0.05);
+  font-weight: 700;
+}
+
+.stock-ticker-chip--market {
+  color: rgba(0, 212, 255, 0.55);
+  border: 1px solid rgba(0, 212, 255, 0.18);
+  background: rgba(0, 212, 255, 0.04);
+}
+
+.stock-ticker-chip--up .stock-ticker-chip__value {
+  color: #81ff9b;
+  text-shadow: 0 0 10px rgba(129, 255, 155, 0.22);
+}
+
+.stock-ticker-chip--down .stock-ticker-chip__value {
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.22);
 }
 
 .status-pill {
@@ -819,6 +854,16 @@ body.night-mode .main-interface {
   }
 }
 
+@keyframes stock-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes boot-title-flicker {
   0% {
     opacity: 1;
@@ -932,6 +977,10 @@ body.night-mode .main-interface {
     width: 100%;
     margin: 0;
     justify-content: center;
+  }
+
+  .stock-ticker-strip {
+    margin: 0;
   }
 }
 

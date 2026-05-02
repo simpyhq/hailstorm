@@ -64,20 +64,23 @@ async function updateWeather() {
     const daily = payload?.daily;
     const high = daily?.temperature_2m_max?.[0];
     const low = daily?.temperature_2m_min?.[0];
+    const weatherCode = current?.weathercode ?? current?.weather_code;
+    const windSpeed = current?.windspeed_10m ?? current?.wind_speed_10m;
 
     if (
       !Number.isFinite(current?.temperature_2m) ||
-      !Number.isFinite(current?.windspeed_10m) ||
+      !Number.isFinite(windSpeed) ||
       !Number.isFinite(high) ||
-      !Number.isFinite(low)
+      !Number.isFinite(low) ||
+      !Number.isFinite(weatherCode)
     ) {
       throw new Error("Weather payload missing fields");
     }
 
     renderWeather({
       temperature: current.temperature_2m,
-      condition: weatherCodeToText(current.weathercode),
-      windSpeed: current.windspeed_10m,
+      condition: weatherCodeToText(weatherCode),
+      windSpeed,
       high,
       low,
     });
