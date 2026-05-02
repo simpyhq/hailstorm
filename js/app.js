@@ -252,6 +252,7 @@ function handleSend(message) {
 }
 
 async function runBootSequence() {
+  initSystems();
   bootTitle.classList.add("is-visible");
   await wait(800);
   if (bootSkipped) {
@@ -344,7 +345,6 @@ async function runBootSequence() {
   }
   orb.setState("idle");
   bootComplete = true;
-  initSystems();
 }
 
 function bindEvents() {
@@ -388,6 +388,7 @@ function bindEvents() {
 }
 
 async function startApp() {
+  initSystems();
   updateClock();
   window.setInterval(updateClock, 1000);
   applyNightMode(detectNightMode());
