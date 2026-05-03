@@ -431,6 +431,13 @@ export function initStocks() {
   const initialStocks = getCurrentStocks();
   renderStocks(initialStocks);
 
+  // Pause stock ticker on hover
+  const tickerInner = getTickerInner();
+  if (tickerInner) {
+    tickerInner.addEventListener("mouseenter", () => { tickerInner.style.animationPlayState = "paused"; });
+    tickerInner.addEventListener("mouseleave", () => { tickerInner.style.animationPlayState = "running"; });
+  }
+
   if (isMarketHours()) {
     connectStockStream();
     startYahooFallbackPolling();

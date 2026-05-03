@@ -25,6 +25,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./css/hailstorm.css" />
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
   </head>
   <body class="hailstorm-shell min-h-screen">
     <div id="boot-overlay" class="boot-overlay" aria-hidden="true">
@@ -149,6 +150,7 @@
             <div id="bruce-trade-1" class="bruce-trade">No active trades</div>
             <div id="bruce-pnl" class="bruce-pnl">P&amp;L: --</div>
           </div>
+          <div id="tradingview-chart" class="tradingview-chart"></div>
         </section>
 
         <section class="hud-widget">
@@ -161,6 +163,43 @@
             <div class="widget-row"><span class="stat-label">TOTAL</span><span id="internship-total" class="stat-val">--</span></div>
           </div>
         </section>
+
+        <section class="hud-widget">
+          <h2>EMAIL</h2>
+          <div id="email-list" class="widget-list">
+            <div class="widget-row"><span class="email-subject">Loading...</span></div>
+          </div>
+        </section>
+
+        <section class="hud-widget">
+          <h2>NOW PLAYING</h2>
+          <div id="spotify-widget" class="spotify-widget">
+            <div class="spotify-art-wrap">
+              <img id="spotify-art" src="" alt="" class="spotify-art" />
+              <div id="spotify-art-placeholder" class="spotify-art-placeholder">&#9835;</div>
+            </div>
+            <div class="spotify-info">
+              <div id="spotify-track" class="spotify-track">Not connected</div>
+              <div id="spotify-artist" class="spotify-artist">--</div>
+              <div class="spotify-controls">
+                <button id="spotify-prev" class="spotify-btn" aria-label="Previous">&#9664;&#9664;</button>
+                <button id="spotify-play" class="spotify-btn spotify-btn--play" aria-label="Play/Pause">&#9654;</button>
+                <button id="spotify-next" class="spotify-btn" aria-label="Next">&#9654;&#9654;</button>
+              </div>
+              <div class="spotify-progress-wrap">
+                <div id="spotify-progress" class="spotify-progress"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="hud-widget">
+          <h2>QUOTE</h2>
+          <div id="quote-widget" class="quote-widget">
+            <p id="quote-text" class="quote-text">Loading...</p>
+            <p id="quote-author" class="quote-author">--</p>
+          </div>
+        </section>
       </aside>
 
       <section class="center-panel">
@@ -170,6 +209,7 @@
             <h1>J.A.R.V.I.S.</h1>
             <p class="status-line">SYSTEM ONLINE</p>
             <button id="mission-control" type="button">MISSION CONTROL</button>
+            <button id="focus-mode" type="button" class="focus-mode-btn">FOCUS MODE</button>
           </div>
           <div class="speak-hint">PRESS SPACE TO SPEAK</div>
         </div>

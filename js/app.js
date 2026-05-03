@@ -8,6 +8,10 @@ import { initPolymarket } from "./polymarket.js";
 import { initSports } from "./sports.js";
 import { initStocks } from "./stocks.js";
 import { initWeather } from "./weather.js";
+import { initQuote } from "./quote.js";
+import { initSpotify } from "./spotify.js";
+import { initEmailWidget } from "./email-widget.js";
+import { initTradingView } from "./tradingview-widget.js";
 
 const clockEl = document.getElementById("clock");
 const dateEl = document.getElementById("date");
@@ -189,6 +193,15 @@ function revealMainInterface() {
   rightPanel.classList.add("slide-in-right");
 }
 
+let isFocusMode = false;
+
+function toggleFocusMode() {
+  isFocusMode = !isFocusMode;
+  document.body.classList.toggle("focus-mode", isFocusMode);
+  const btn = document.getElementById("focus-mode");
+  if (btn) btn.textContent = isFocusMode ? "EXIT FOCUS" : "FOCUS MODE";
+}
+
 function initSystems() {
   if (systemsInitialized) {
     return;
@@ -204,6 +217,10 @@ function initSystems() {
   initCanvas();
   initBruce();
   initInternships();
+  initQuote();
+  initSpotify();
+  initEmailWidget();
+  initTradingView();
 }
 
 function skipBoot() {
@@ -385,6 +402,7 @@ function bindEvents() {
   canvas.addEventListener("click", toggleListening);
   nightModeToggle.addEventListener("click", () => applyNightMode(!isNightMode));
   document.getElementById("boot-skip")?.addEventListener("click", skipBoot);
+  document.getElementById("focus-mode")?.addEventListener("click", toggleFocusMode);
 }
 
 async function startApp() {

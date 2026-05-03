@@ -124,4 +124,11 @@ export function initNews() {
   window.setInterval(() => {
     updateNews().catch(() => {});
   }, NEWS_REFRESH_MS);
+
+  // Pause ticker on hover
+  const track = document.getElementById("news-ticker-track");
+  if (track) {
+    track.addEventListener("mouseenter", () => { track.style.animationPlayState = "paused"; });
+    track.addEventListener("mouseleave", () => { track.style.animationPlayState = "running"; });
+  }
 }
