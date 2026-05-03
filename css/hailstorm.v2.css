@@ -466,8 +466,6 @@ body.night-mode .main-interface {
 .main-frame {
   display: grid;
   grid-template-columns: 260px 1fr;
-  grid-template-rows: 1fr; /* single row fills height */
-  align-items: stretch;
   height: calc(100vh - 88px); /* 48px top bar + 40px bottom ticker */
   margin-top: 48px;
   overflow: hidden;
