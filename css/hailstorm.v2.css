@@ -311,19 +311,25 @@ body.night-mode .main-interface {
 
 .top-bar {
   top: 0;
+  left: 0;
+  right: 0;
   height: 48px;
   padding-left: 20px;
   padding-right: 20px;
   justify-content: space-between;
   z-index: 100;
+  width: 100%;
 }
 
 .bottom-bar {
   bottom: 0;
+  left: 0;
+  right: 0;
   height: 40px;
   padding: 0 12px;
   overflow: hidden;
   z-index: 100;
+  width: 100%;
 }
 
 .jarvis-logo,
@@ -466,8 +472,10 @@ body.night-mode .main-interface {
 .main-frame {
   display: grid;
   grid-template-columns: 260px 1fr;
-  height: calc(100vh - 88px); /* 48px top bar + 40px bottom ticker */
+  /* top bar 48px + tab bar 36px = 84px; bottom ticker 40px */
+  height: calc(100vh - 48px - 40px);
   margin-top: 48px;
+  margin-bottom: 40px;
   overflow: hidden;
   padding: 0;
   gap: 0;
@@ -1444,13 +1452,12 @@ body.night-mode .main-interface {
 .inline-chat {
   width: 100%;
   max-width: 680px;
-  padding: 6px 24px 12px;
+  /* extra bottom padding so chat never touches the fixed ticker */
+  padding: 6px 24px 16px;
   display: flex;
   flex-direction: column;
   gap: 0;
   flex-shrink: 0;
-  /* push away from bottom ticker */
-  margin-bottom: 4px;
 }
 
 .chat-history-inline {
