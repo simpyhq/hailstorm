@@ -494,7 +494,7 @@ body.night-mode .main-interface {
   height: 38px;
   line-height: 38px;
   border-bottom: 1px solid rgba(var(--primary-rgb), 0.35);
-  background: #060b16;
+  background: #0a1020;
   box-sizing: border-box;
   /* clip overflowing tab-pane content */
   overflow: hidden;
@@ -509,23 +509,25 @@ body.night-mode .main-interface {
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: rgba(140, 240, 255, 0.55);
+  color: #00d4ff;
   font-family: "Orbitron", sans-serif;
-  font-size: 0.52rem;
+  font-size: 0.55rem;
+  font-weight: 700;
   letter-spacing: 0.15em;
   padding: 0;
   cursor: pointer;
   box-sizing: border-box;
   transition: color 0.2s ease, background 0.2s ease;
+  text-shadow: 0 0 6px rgba(0,212,255,0.5);
 }
 
-.tab-btn:hover { color: var(--primary-color); }
+.tab-btn:hover { background: rgba(0,212,255,0.08); }
 
 .tab-btn.active {
-  color: var(--primary-color);
-  border-bottom: 2px solid var(--primary-color);
-  background: rgba(var(--primary-rgb), 0.07);
-  text-shadow: 0 0 8px rgba(var(--primary-rgb), 0.6);
+  color: #00d4ff;
+  border-bottom: 2px solid #00d4ff;
+  background: rgba(0,212,255,0.12);
+  text-shadow: 0 0 10px rgba(0,212,255,0.8);
 }
 
 /* ── TAB PANES ── */
