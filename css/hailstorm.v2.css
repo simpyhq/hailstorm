@@ -593,6 +593,117 @@ body.night-mode .main-interface {
   position: relative;
 }
 
+.orb-rings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+}
+.orb-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  border: 1px solid var(--primary-color);
+  transform: translate(-50%, -50%);
+  opacity: 0.35;
+  filter: drop-shadow(0 0 8px var(--glow-color));
+}
+.orb-ring-1 {
+  width: calc(min(520px, 60vh) + 80px);
+  height: calc(min(520px, 60vh) + 80px);
+  border-style: dashed;
+  border-width: 1px;
+  animation: ring-rotate-cw 60s linear infinite;
+  opacity: 0.45;
+}
+.orb-ring-2 {
+  width: calc(min(520px, 60vh) + 140px);
+  height: calc(min(520px, 60vh) + 140px);
+  border-style: dotted;
+  border-width: 1px;
+  animation: ring-rotate-ccw 90s linear infinite;
+  opacity: 0.25;
+}
+.orb-ring-3 {
+  width: calc(min(520px, 60vh) + 220px);
+  height: calc(min(520px, 60vh) + 220px);
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(var(--primary-rgb), 0.18);
+  animation: ring-rotate-cw 120s linear infinite;
+  opacity: 0.5;
+}
+.orb-ring-4 {
+  width: calc(min(520px, 60vh) + 300px);
+  height: calc(min(520px, 60vh) + 300px);
+  border: none;
+  background: radial-gradient(circle, transparent 49%, rgba(var(--primary-rgb), 0.08) 50%, transparent 51%);
+  animation: ring-pulse 4s ease-in-out infinite;
+}
+@keyframes ring-rotate-cw {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes ring-rotate-ccw {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(-360deg); }
+}
+@keyframes ring-pulse {
+  0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.02); }
+}
+
+/* Orb Tick Marks (data dial) */
+.orb-ticks {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(min(520px, 60vh) + 40px);
+  height: calc(min(520px, 60vh) + 40px);
+  border-radius: 50%;
+  background:
+    conic-gradient(
+      from 0deg,
+      var(--primary-color) 0deg, var(--primary-color) 1deg,
+      transparent 1deg, transparent 30deg,
+      var(--primary-color) 30deg, var(--primary-color) 31deg,
+      transparent 31deg, transparent 60deg,
+      var(--primary-color) 60deg, var(--primary-color) 61deg,
+      transparent 61deg, transparent 90deg,
+      var(--primary-color) 90deg, var(--primary-color) 91deg,
+      transparent 91deg, transparent 120deg,
+      var(--primary-color) 120deg, var(--primary-color) 121deg,
+      transparent 121deg, transparent 150deg,
+      var(--primary-color) 150deg, var(--primary-color) 151deg,
+      transparent 151deg, transparent 180deg,
+      var(--primary-color) 180deg, var(--primary-color) 181deg,
+      transparent 181deg, transparent 210deg,
+      var(--primary-color) 210deg, var(--primary-color) 211deg,
+      transparent 211deg, transparent 240deg,
+      var(--primary-color) 240deg, var(--primary-color) 241deg,
+      transparent 241deg, transparent 270deg,
+      var(--primary-color) 270deg, var(--primary-color) 271deg,
+      transparent 271deg, transparent 300deg,
+      var(--primary-color) 300deg, var(--primary-color) 301deg,
+      transparent 301deg, transparent 330deg,
+      var(--primary-color) 330deg, var(--primary-color) 331deg,
+      transparent 331deg, transparent 360deg
+    );
+  mask: radial-gradient(circle, transparent 48%, black 49%, black 50%, transparent 51%);
+  -webkit-mask: radial-gradient(circle, transparent 48%, black 49%, black 50%, transparent 51%);
+  opacity: 0.6;
+  animation: ring-rotate-cw 240s linear infinite;
+}
+
+#jarvis-orb {
+  position: relative;
+  z-index: 2;
+}
+
 .hud-widget {
   padding: 22px 20px;
   border-radius: 0;
