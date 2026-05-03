@@ -481,7 +481,7 @@ body.night-mode .main-interface {
 /* ── 2-COLUMN LAYOUT: sidebar + center ── */
 .main-frame {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 300px 1fr;
   height: calc(100vh - 54px - 40px);
   margin-top: 54px;
   margin-bottom: 40px;
@@ -552,14 +552,14 @@ body.night-mode .main-interface {
 .tab-pane.active {
   display: flex;
   flex-direction: column;
-  align-items: center; /* center widgets horizontally */
-  gap: 10px;
-  padding: 12px 10px;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 14px 24px;
 }
 
 .tab-pane .hud-widget {
   width: 100%;
-  max-width: 240px; /* consistent width so they sit centered cleanly */
+  max-width: 100%;
   flex-shrink: 0;
 }
 
@@ -592,12 +592,12 @@ body.night-mode .main-interface {
 }
 
 .hud-widget {
-  padding: 12px;
+  padding: 16px;
   border-radius: 14px;
 }
 
 .hud-widget h2 {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -1233,7 +1233,7 @@ body.night-mode .main-interface {
 /* Narrow sidebar on smaller screens */
 @media (max-width: 1100px) {
   .main-frame {
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 260px 1fr;
   }
 }
 
