@@ -256,8 +256,9 @@
 
     <script>
     // Tab system — runs immediately, no CSS dependency
-    document.addEventListener('DOMContentLoaded', function() {
+    window.addEventListener('load', function() {
       const panel = document.getElementById('left-panel');
+      console.log('TAB INIT: panel=', panel, 'height=', panel && panel.getBoundingClientRect().height);
       if (!panel) return;
 
       // Measure actual rendered height
