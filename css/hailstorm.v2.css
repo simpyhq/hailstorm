@@ -477,13 +477,11 @@ body.night-mode .main-interface {
 .left-panel {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* do NOT set overflow:hidden here - it breaks sticky and collapses children */
+  overflow: visible;
   border-right: 1px solid rgba(var(--primary-rgb), 0.18);
   background: rgba(10,14,26,0.65);
   min-height: 0;
-  align-self: stretch;
-  /* force children to respect flex sizing */
-  contain: layout;
 }
 
 /* ── TAB BAR ── */
@@ -492,17 +490,14 @@ body.night-mode .main-interface {
   flex-direction: row;
   flex-shrink: 0;
   flex-grow: 0;
-  flex-basis: auto;
-  height: 38px;
-  min-height: 38px;
-  max-height: 38px;
   width: 100%;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  height: 38px;
+  line-height: 38px;
   border-bottom: 1px solid rgba(var(--primary-rgb), 0.35);
   background: #060b16;
   box-sizing: border-box;
+  /* clip overflowing tab-pane content */
+  overflow: hidden;
 }
 
 .tab-btn {
@@ -537,15 +532,18 @@ body.night-mode .main-interface {
 .tab-pane {
   display: none;
   flex-direction: column;
+  /* scroll happens here, NOT on the parent */
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
+  min-height: 0;
   padding: 8px;
   scrollbar-width: thin;
   scrollbar-color: rgba(var(--primary-rgb), 0.2) transparent;
 }
 
 .tab-pane.active {
-  display: flex !important;
+  display: flex;
 }
 
 .tab-pane .hud-widget {
