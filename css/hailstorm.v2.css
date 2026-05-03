@@ -477,8 +477,7 @@ body.night-mode .main-interface {
 .left-panel {
   display: flex;
   flex-direction: column;
-  /* do NOT set overflow:hidden here - it breaks sticky and collapses children */
-  overflow: visible;
+  overflow: hidden;
   border-right: 1px solid rgba(var(--primary-rgb), 0.18);
   background: rgba(10,14,26,0.65);
   min-height: 0;
@@ -494,7 +493,7 @@ body.night-mode .main-interface {
   height: 38px;
   line-height: 38px;
   border-bottom: 1px solid rgba(var(--primary-rgb), 0.35);
-  background: #0a1020;
+  background: red; /* DEBUG - remove after confirming visibility */
   box-sizing: border-box;
   /* clip overflowing tab-pane content */
   overflow: hidden;
