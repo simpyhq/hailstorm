@@ -478,17 +478,10 @@ body.night-mode .main-interface {
 .left-panel {
   display: flex;
   flex-direction: column;
-  opacity: 0;
   border-right: 1px solid rgba(var(--primary-rgb), 0.18);
   background: rgba(10,14,26,0.6);
-  transform: translateX(-20px);
-  transition: transform 0.8s ease-out 0.2s, opacity 0.8s ease-out 0.2s;
   overflow: hidden;
-}
-
-.left-panel.slide-in-left {
-  transform: translateX(0);
-  opacity: 1;
+  /* always visible — no opacity animation to prevent blank panel bug */
 }
 
 /* ── TAB BAR ── */
@@ -547,11 +540,10 @@ body.night-mode .main-interface {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  /* orb takes flex-1, chat bar is fixed at bottom */
+  justify-content: flex-end;
   position: relative;
   overflow: hidden;
-  opacity: 0;
-  transition: opacity 0.8s ease-out 0.4s;
   height: 100%;
 }
 
@@ -879,15 +871,21 @@ body.night-mode .main-interface {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* takes all available vertical space above the inline chat */
   flex: 1;
   min-height: 0;
   position: relative;
   background: radial-gradient(circle at center, rgba(var(--primary-rgb), 0.1), transparent 55%);
+  width: 100%;
+  /* start visible — JS adds scale-in for boot animation */
+  opacity: 1;
+  transform: scale(1);
+  transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+}
+
+/* Boot reveal still works when JS fires */
+.main-interface:not(.is-visible) .orb-stage {
   opacity: 0;
   transform: scale(0.94);
-  transition: transform 0.8s ease-out 0.2s, opacity 0.8s ease-out 0.2s;
-  width: 100%;
 }
 
 .orb-stage.scale-in {
