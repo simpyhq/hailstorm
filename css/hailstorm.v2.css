@@ -30,16 +30,14 @@ body.night-mode {
   box-sizing: border-box;
 }
 
-html {
-  height: 100%;
+html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  background: #0a0e1a;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 32%, rgba(var(--primary-rgb), 0.14), transparent 32%),
@@ -479,50 +477,53 @@ body.night-mode .main-interface {
 .left-panel {
   display: flex;
   flex-direction: column;
-  height: 100%;
   overflow: hidden;
   border-right: 1px solid rgba(var(--primary-rgb), 0.18);
   background: rgba(10,14,26,0.65);
+  /* explicitly fill the grid cell */
+  min-height: 0;
+  align-self: stretch;
 }
 
 /* ── TAB BAR ── */
 .tab-bar {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-shrink: 0;
-  height: 38px;
-  border-top: 1px solid rgba(var(--primary-rgb), 0.3);
-  border-bottom: 1px solid rgba(var(--primary-rgb), 0.3);
-  background: rgba(5, 8, 18, 0.98);
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 38px;  /* fixed 38px, never shrink or grow */
+  min-height: 38px;
+  max-height: 38px;
+  width: 100%;
+  border-bottom: 1px solid rgba(var(--primary-rgb), 0.35);
+  background: #060b16;
+  box-sizing: border-box;
 }
 
 .tab-btn {
   flex: 1;
-  display: flex !important;
+  height: 100%;
+  display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: rgba(140, 240, 255, 0.6);
+  color: rgba(140, 240, 255, 0.55);
   font-family: "Orbitron", sans-serif;
   font-size: 0.52rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
   padding: 0;
   cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
+  transition: color 0.2s ease, background 0.2s ease;
 }
 
-.tab-btn:hover {
-  color: var(--primary-color);
-  background: rgba(var(--primary-rgb), 0.05);
-}
+.tab-btn:hover { color: var(--primary-color); }
 
 .tab-btn.active {
   color: var(--primary-color);
-  border-bottom-color: var(--primary-color);
-  background: rgba(var(--primary-rgb), 0.08);
-  text-shadow: 0 0 8px rgba(var(--primary-rgb), 0.8);
+  border-bottom: 2px solid var(--primary-color);
+  background: rgba(var(--primary-rgb), 0.07);
+  text-shadow: 0 0 8px rgba(var(--primary-rgb), 0.6);
 }
 
 /* ── TAB PANES ── */
