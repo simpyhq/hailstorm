@@ -467,12 +467,8 @@ body.night-mode .main-interface {
 .main-frame {
   display: grid;
   grid-template-columns: 260px 1fr;
-  /* sit between fixed top bar and fixed bottom bar */
-  position: fixed;
-  top: calc(48px + env(safe-area-inset-top, 0px));
-  left: 0;
-  right: 0;
-  bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  height: calc(100vh - calc(48px + env(safe-area-inset-top, 0px)) - calc(40px + env(safe-area-inset-bottom, 0px)));
+  margin-top: calc(48px + env(safe-area-inset-top, 0px));
   overflow: hidden;
   padding: 0;
   gap: 0;
