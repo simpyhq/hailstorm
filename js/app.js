@@ -196,17 +196,9 @@ function revealMainInterface() {
 }
 
 function initTabs() {
-  const tabBtns = document.querySelectorAll(".tab-btn");
-  const tabPanes = document.querySelectorAll(".tab-pane");
-  tabBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      tabBtns.forEach((b) => b.classList.remove("active"));
-      tabPanes.forEach((p) => p.classList.remove("active"));
-      btn.classList.add("active");
-      const target = document.getElementById(`tab-${btn.dataset.tab}`);
-      if (target) target.classList.add("active");
-    });
-  });
+  // Tab switching is handled by window._switchTab() defined in inline script
+  // Initial state already set by window.load handler
+  if (window._switchTab) window._switchTab('intel');
 }
 
 let isFocusMode = false;
