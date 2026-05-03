@@ -16,7 +16,7 @@ import { initTradingView } from "./tradingview-widget.js";
 const clockEl = document.getElementById("clock");
 const dateEl = document.getElementById("date");
 const canvas = document.getElementById("jarvis-orb");
-const chatHistory = document.getElementById("chat-history");
+const chatHistory = document.getElementById("chat-history") || document.querySelector(".chat-history-inline");
 const chatForm = document.getElementById("chat-form");
 const chatText = document.getElementById("chat-text");
 const mainInterface = document.getElementById("main-interface");
@@ -31,7 +31,7 @@ const bootWelcome = document.getElementById("boot-welcome");
 const nightModeToggle = document.getElementById("night-mode-toggle");
 const flashOverlay = document.getElementById("flash-overlay");
 const leftPanel = document.querySelector(".left-panel");
-const rightPanel = document.querySelector(".right-panel");
+const rightPanel = document.querySelector(".right-panel"); // may be null in new layout
 const orbStage = document.querySelector(".orb-stage");
 
 const BOOT_CHECK_LINES = [
@@ -190,7 +190,23 @@ function revealMainInterface() {
   mainInterface.classList.add("is-visible");
   orbStage.classList.add("scale-in");
   leftPanel.classList.add("slide-in-left");
-  rightPanel.classList.add("slide-in-right");
+  rightPanel?.classList.add("slide-in-right");
+  // Reveal center panel in new layout
+  document.querySelector(".center-panel")?.classList.add("slide-in-left");
+}
+
+function initTabs() {
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const tabPanes = document.querySelectorAll(".tab-pane");
+  tabBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach((b) => b.classList.remove("active"));
+      tabPanes.forEach((p) => p.classList.remove("active"));
+      btn.classList.add("active");
+      const target = document.getElementById(`tab-${btn.dataset.tab}`);
+      if (target) target.classList.add("active");
+    });
+  });
 }
 
 let isFocusMode = false;
@@ -199,7 +215,7 @@ function toggleFocusMode() {
   isFocusMode = !isFocusMode;
   document.body.classList.toggle("focus-mode", isFocusMode);
   const btn = document.getElementById("focus-mode");
-  if (btn) btn.textContent = isFocusMode ? "EXIT FOCUS" : "FOCUS MODE";
+  if (btn) btn.textContent = isFocusMode ? "EXIT" : "FOCUS";
 }
 
 function initSystems() {
@@ -403,6 +419,7 @@ function bindEvents() {
   nightModeToggle.addEventListener("click", () => applyNightMode(!isNightMode));
   document.getElementById("boot-skip")?.addEventListener("click", skipBoot);
   document.getElementById("focus-mode")?.addEventListener("click", toggleFocusMode);
+  initTabs();
 }
 
 async function startApp() {

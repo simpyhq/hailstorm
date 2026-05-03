@@ -17,17 +17,16 @@
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png" />
     <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./css/hailstorm.css" />
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
   </head>
-  <body class="hailstorm-shell min-h-screen">
+  <body class="hailstorm-shell">
+
+    <!-- ── BOOT OVERLAY ── -->
     <div id="boot-overlay" class="boot-overlay" aria-hidden="true">
       <div class="boot-sequence">
         <div id="boot-title" class="boot-title">INITIALIZING J.A.R.V.I.S.</div>
@@ -44,16 +43,18 @@
       <button id="boot-skip" class="boot-skip-btn">SKIP ▶</button>
     </div>
 
+    <!-- ── MAIN INTERFACE ── -->
     <div id="main-interface" class="main-interface">
       <div class="scanline-overlay" aria-hidden="true"></div>
 
+      <!-- TOP BAR -->
       <header class="hud-bar top-bar">
         <div class="top-bar__left">
           <span class="jarvis-logo">J.A.R.V.I.S.</span>
         </div>
         <div class="top-bar__center">
           <div id="clock" class="clock-readout">00:00:00</div>
-          <div id="date" class="date-readout">0000-00-00</div>
+          <div id="date" class="date-readout">SAT, MAY 2</div>
         </div>
         <div id="stock-ticker" class="top-bar__stocks" aria-label="Market ticker">
           <div id="stock-ticker-strip" class="stock-ticker-strip">
@@ -61,202 +62,192 @@
           </div>
         </div>
         <div class="top-bar__right">
-          <div class="status-pill">
-            <span class="status-dot"></span>
-            <span>SYSTEM</span>
-          </div>
-          <div class="status-pill">
-            <span class="status-dot"></span>
-            <span>NETWORK</span>
-          </div>
-          <div class="status-pill">
-            <span class="status-dot"></span>
-            <span>VOICE</span>
-          </div>
-          <button id="night-mode-toggle" class="night-mode-toggle" type="button" aria-pressed="false">
-            NM
-          </button>
+          <div class="status-pill"><span class="status-dot"></span><span>SYSTEM</span></div>
+          <div class="status-pill"><span class="status-dot"></span><span>NET</span></div>
+          <button id="night-mode-toggle" class="night-mode-toggle" type="button" aria-pressed="false">NM</button>
+          <button id="focus-mode" type="button" class="focus-mode-btn-top">FOCUS</button>
         </div>
       </header>
 
+      <!-- MAIN GRID -->
       <main class="main-frame">
-      <aside class="left-panel">
-        <section class="hud-widget">
-          <h2>WEATHER</h2>
-          <div class="weather-widget">
-            <div id="weather-temp" class="weather-temp">72°F</div>
-            <div id="weather-condition" class="weather-condition">CLEAR</div>
-            <div id="weather-highlow" class="weather-meta">High: 78° Low: 61°</div>
-            <div id="weather-wind" class="weather-meta">Wind: 12 mph</div>
-            <div id="weather-location" class="weather-location">NORMAN, OK</div>
-          </div>
-        </section>
 
-        <section class="hud-widget">
-          <h2>SYSTEM STATS</h2>
-          <div class="stat-row">
-            <span>CPU</span>
-            <div class="stat-bar"><div class="stat-bar__fill" style="width: 45%"></div></div>
-            <span>45%</span>
+        <!-- LEFT PANEL — TABBED WIDGETS -->
+        <aside class="left-panel">
+          <div class="tab-bar">
+            <button class="tab-btn active" data-tab="intel">INTEL</button>
+            <button class="tab-btn" data-tab="markets">MARKETS</button>
+            <button class="tab-btn" data-tab="life">LIFE</button>
           </div>
-          <div class="stat-row">
-            <span>RAM</span>
-            <div class="stat-bar"><div class="stat-bar__fill" style="width: 62%"></div></div>
-            <span>62%</span>
-          </div>
-          <div class="stat-row">
-            <span>DISK</span>
-            <div class="stat-bar"><div class="stat-bar__fill" style="width: 38%"></div></div>
-            <span>38%</span>
-          </div>
-        </section>
 
-        <section class="hud-widget">
-          <h2>CANVAS</h2>
-          <div id="canvas-list" class="widget-list">
-            <div class="canvas-row"><span>Loading...</span></div>
-          </div>
-        </section>
-
-        <section class="hud-widget">
-          <h2>POLYMARKET</h2>
-          <div id="polymarket-list" class="widget-list">
-            <div class="widget-row"><span>Loading markets...</span></div>
-          </div>
-        </section>
-
-        <section class="hud-widget">
-          <h2>DALLAS SPORTS</h2>
-          <div class="widget-list">
-            <div class="widget-row"><span class="sport-label">TEX</span><span id="rangers-score" class="sport-score">Loading...</span></div>
-            <div class="widget-row"><span class="sport-label">DAL</span><span id="mavs-score" class="sport-score">Loading...</span></div>
-            <div class="widget-row"><span class="sport-label">DAL</span><span id="cowboys-score" class="sport-score">Loading...</span></div>
-          </div>
-        </section>
-
-        <section class="hud-widget">
-          <h2>MACRO</h2>
-          <div class="widget-list">
-            <div class="widget-row"><span class="macro-label">FED</span><span id="macro-fed" class="macro-value">--</span></div>
-            <div class="widget-row"><span class="macro-label">10Y</span><span id="macro-10y" class="macro-value">--</span></div>
-            <div class="widget-row"><span class="macro-label">DXY</span><span id="macro-dxy" class="macro-value">--</span></div>
-          </div>
-        </section>
-
-        <section class="hud-widget">
-          <h2 class="bruce-heading">BRUCE &mdash; OPTIONS</h2>
-          <div class="bruce-widget">
-            <div id="bruce-status" class="bruce-status">-- CHECKING --</div>
-            <div id="bruce-trade-1" class="bruce-trade">No active trades</div>
-            <div id="bruce-pnl" class="bruce-pnl">P&amp;L: --</div>
-          </div>
-          <div id="tradingview-chart" class="tradingview-chart"></div>
-        </section>
-
-        <section class="hud-widget">
-          <h2>INTERNSHIPS</h2>
-          <div class="widget-list">
-            <div class="widget-row"><span class="stat-label">APPLIED</span><span id="internship-applied" class="stat-val">--</span></div>
-            <div class="widget-row"><span class="stat-label">INTERVIEW</span><span id="internship-interview" class="stat-val">--</span></div>
-            <div class="widget-row"><span class="stat-label">OFFER</span><span id="internship-offer" class="stat-val">--</span></div>
-            <div class="widget-row"><span class="stat-label">REJECTED</span><span id="internship-rejected" class="stat-val">--</span></div>
-            <div class="widget-row"><span class="stat-label">TOTAL</span><span id="internship-total" class="stat-val">--</span></div>
-          </div>
-        </section>
-
-        <section class="hud-widget">
-          <h2>EMAIL</h2>
-          <div id="email-list" class="widget-list">
-            <div class="widget-row"><span class="email-subject">Loading...</span></div>
-          </div>
-        </section>
-
-        <section class="hud-widget">
-          <h2>NOW PLAYING</h2>
-          <div id="spotify-widget" class="spotify-widget">
-            <div class="spotify-art-wrap">
-              <img id="spotify-art" src="" alt="" class="spotify-art" />
-              <div id="spotify-art-placeholder" class="spotify-art-placeholder">&#9835;</div>
-            </div>
-            <div class="spotify-info">
-              <div id="spotify-track" class="spotify-track">Not connected</div>
-              <div id="spotify-artist" class="spotify-artist">--</div>
-              <div class="spotify-controls">
-                <button id="spotify-prev" class="spotify-btn" aria-label="Previous">&#9664;&#9664;</button>
-                <button id="spotify-play" class="spotify-btn spotify-btn--play" aria-label="Play/Pause">&#9654;</button>
-                <button id="spotify-next" class="spotify-btn" aria-label="Next">&#9654;&#9654;</button>
+          <!-- INTEL TAB: Weather, Canvas, Macro, System -->
+          <div class="tab-pane active" id="tab-intel">
+            <section class="hud-widget">
+              <h2>WEATHER</h2>
+              <div class="weather-widget">
+                <div id="weather-temp" class="weather-temp">--°F</div>
+                <div id="weather-condition" class="weather-condition">--</div>
+                <div id="weather-highlow" class="weather-meta">High: -- Low: --</div>
+                <div id="weather-wind" class="weather-meta">Wind: --</div>
+                <div id="weather-location" class="weather-location">NORMAN, OK</div>
               </div>
-              <div class="spotify-progress-wrap">
-                <div id="spotify-progress" class="spotify-progress"></div>
+            </section>
+
+            <section class="hud-widget">
+              <h2>CANVAS</h2>
+              <div id="canvas-list" class="widget-list">
+                <div class="canvas-row"><span>Loading...</span></div>
               </div>
+            </section>
+
+            <section class="hud-widget">
+              <h2>MACRO</h2>
+              <div class="widget-list">
+                <div class="widget-row"><span class="macro-label">FED</span><span id="macro-fed" class="macro-value">--</span></div>
+                <div class="widget-row"><span class="macro-label">10Y</span><span id="macro-10y" class="macro-value">--</span></div>
+                <div class="widget-row"><span class="macro-label">DXY</span><span id="macro-dxy" class="macro-value">--</span></div>
+              </div>
+            </section>
+
+            <section class="hud-widget">
+              <h2>SYSTEM</h2>
+              <div class="stat-row">
+                <span>CPU</span>
+                <div class="stat-bar"><div class="stat-bar__fill" style="width: 45%"></div></div>
+                <span>45%</span>
+              </div>
+              <div class="stat-row">
+                <span>RAM</span>
+                <div class="stat-bar"><div class="stat-bar__fill" style="width: 62%"></div></div>
+                <span>62%</span>
+              </div>
+              <div class="stat-row">
+                <span>DISK</span>
+                <div class="stat-bar"><div class="stat-bar__fill" style="width: 38%"></div></div>
+                <span>38%</span>
+              </div>
+            </section>
+          </div>
+
+          <!-- MARKETS TAB: Bruce + Chart, Polymarket, Sports -->
+          <div class="tab-pane" id="tab-markets">
+            <section class="hud-widget">
+              <h2 class="bruce-heading">BRUCE &mdash; OPTIONS</h2>
+              <div class="bruce-widget">
+                <div id="bruce-status" class="bruce-status">-- CHECKING --</div>
+                <div id="bruce-trade-1" class="bruce-trade">No active trades</div>
+                <div id="bruce-pnl" class="bruce-pnl">P&amp;L: --</div>
+              </div>
+              <div id="tradingview-chart" class="tradingview-chart"></div>
+            </section>
+
+            <section class="hud-widget">
+              <h2>POLYMARKET</h2>
+              <div id="polymarket-list" class="widget-list">
+                <div class="widget-row"><span>Loading markets...</span></div>
+              </div>
+            </section>
+
+            <section class="hud-widget">
+              <h2>DALLAS SPORTS</h2>
+              <div class="widget-list">
+                <div class="widget-row"><span class="sport-label">TEX</span><span id="rangers-score" class="sport-score">Loading...</span></div>
+                <div class="widget-row"><span class="sport-label">MAV</span><span id="mavs-score" class="sport-score">Loading...</span></div>
+                <div class="widget-row"><span class="sport-label">DAL</span><span id="cowboys-score" class="sport-score">Loading...</span></div>
+              </div>
+            </section>
+          </div>
+
+          <!-- LIFE TAB: Spotify, Email, Internships, Quote -->
+          <div class="tab-pane" id="tab-life">
+            <section class="hud-widget">
+              <h2>NOW PLAYING</h2>
+              <div id="spotify-widget" class="spotify-widget">
+                <div class="spotify-art-wrap">
+                  <img id="spotify-art" src="" alt="" class="spotify-art" />
+                  <div id="spotify-art-placeholder" class="spotify-art-placeholder">&#9835;</div>
+                </div>
+                <div class="spotify-info">
+                  <div id="spotify-track" class="spotify-track">Not connected</div>
+                  <div id="spotify-artist" class="spotify-artist">--</div>
+                  <div class="spotify-controls">
+                    <button id="spotify-prev" class="spotify-btn" aria-label="Previous">&#9664;&#9664;</button>
+                    <button id="spotify-play" class="spotify-btn spotify-btn--play" aria-label="Play/Pause">&#9654;</button>
+                    <button id="spotify-next" class="spotify-btn" aria-label="Next">&#9654;&#9654;</button>
+                  </div>
+                  <div class="spotify-progress-wrap">
+                    <div id="spotify-progress" class="spotify-progress"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="hud-widget">
+              <h2>EMAIL</h2>
+              <div id="email-list" class="widget-list">
+                <div class="widget-row"><span class="email-subject">Loading...</span></div>
+              </div>
+            </section>
+
+            <section class="hud-widget">
+              <h2>INTERNSHIPS</h2>
+              <div class="widget-list">
+                <div class="widget-row"><span class="stat-label">APPLIED</span><span id="internship-applied" class="stat-val">--</span></div>
+                <div class="widget-row"><span class="stat-label">INTERVIEW</span><span id="internship-interview" class="stat-val">--</span></div>
+                <div class="widget-row"><span class="stat-label">OFFER</span><span id="internship-offer" class="stat-val">--</span></div>
+                <div class="widget-row"><span class="stat-label">REJECTED</span><span id="internship-rejected" class="stat-val">--</span></div>
+                <div class="widget-row"><span class="stat-label">TOTAL</span><span id="internship-total" class="stat-val">--</span></div>
+              </div>
+            </section>
+
+            <section class="hud-widget">
+              <h2>QUOTE</h2>
+              <div id="quote-widget" class="quote-widget">
+                <p id="quote-text" class="quote-text">Loading...</p>
+                <p id="quote-author" class="quote-author">--</p>
+              </div>
+            </section>
+          </div>
+        </aside>
+
+        <!-- CENTER PANEL — ORB + INLINE CHAT -->
+        <section class="center-panel">
+          <div class="orb-stage">
+            <canvas id="jarvis-orb" width="600" height="600" aria-label="Jarvis Orb"></canvas>
+            <div class="center-copy">
+              <h1>J.A.R.V.I.S.</h1>
+              <p class="status-line" id="orb-status-line">SYSTEM ONLINE</p>
             </div>
+            <div class="speak-hint">PRESS SPACE TO SPEAK</div>
+          </div>
+
+          <!-- INLINE CHAT BELOW ORB -->
+          <div class="inline-chat">
+            <!-- Chat history drawer (expands upward) -->
+            <div id="chat-history" class="chat-history-inline"></div>
+
+            <!-- Input bar -->
+            <form id="chat-form" class="chat-input-inline" autocomplete="off">
+              <button id="mission-control" type="button" class="mc-btn" title="Mission Control">&#9679;</button>
+              <input id="chat-text" type="text" placeholder="Issue a command..." aria-label="Chat input" />
+              <button type="submit" class="send-btn">SEND</button>
+            </form>
           </div>
         </section>
 
-        <section class="hud-widget">
-          <h2>QUOTE</h2>
-          <div id="quote-widget" class="quote-widget">
-            <p id="quote-text" class="quote-text">Loading...</p>
-            <p id="quote-author" class="quote-author">--</p>
-          </div>
-        </section>
-      </aside>
-
-      <section class="center-panel">
-        <div class="orb-stage">
-          <canvas id="jarvis-orb" width="600" height="600" aria-label="Jarvis Orb"></canvas>
-          <div class="center-copy">
-            <h1>J.A.R.V.I.S.</h1>
-            <p class="status-line">SYSTEM ONLINE</p>
-            <button id="mission-control" type="button">MISSION CONTROL</button>
-            <button id="focus-mode" type="button" class="focus-mode-btn">FOCUS MODE</button>
-          </div>
-          <div class="speak-hint">PRESS SPACE TO SPEAK</div>
-        </div>
-      </section>
-
-      <aside class="right-panel">
-        <div class="chat-shell">
-          <div class="chat-header">NEURAL INTERFACE</div>
-          <div id="chat-history" class="chat-history">
-            <div class="chat-message jarvis">
-              <div class="chat-author">Jarvis</div>
-              <div class="chat-bubble">Good evening, Christian. All systems are online.</div>
-            </div>
-            <div class="chat-message user">
-              <div class="chat-author">User</div>
-              <div class="chat-bubble">Run diagnostics.</div>
-            </div>
-            <div class="chat-message jarvis">
-              <div class="chat-author">Jarvis</div>
-              <div class="chat-bubble">All systems nominal. Standing by.<span class="cursor"></span></div>
-            </div>
-          </div>
-          <form id="chat-form" class="chat-input" autocomplete="off">
-            <input
-              id="chat-text"
-              type="text"
-              placeholder="Issue command..."
-              aria-label="Chat input"
-            />
-            <button type="submit">SEND</button>
-          </form>
-        </div>
-      </aside>
       </main>
 
+      <!-- BOTTOM NEWS TICKER -->
       <footer class="hud-bar bottom-bar">
         <div class="ticker-mask">
           <div id="news-ticker-track" class="ticker-track">
             <div id="news-ticker-copy-a" class="ticker-copy">
               MARKET UPDATE: SPY +0.5% | QQQ +0.7% | BREAKING: Markets rally on strong jobs data
-              | RANGERS: Season update | COWBOYS: Offseason news | POLYMARKET: Election odds
-              shifting
+              | RANGERS: Season update | COWBOYS: Offseason news | POLYMARKET: Election odds shifting
             </div>
             <div id="news-ticker-copy-b" class="ticker-copy" aria-hidden="true">
               MARKET UPDATE: SPY +0.5% | QQQ +0.7% | BREAKING: Markets rally on strong jobs data
-              | RANGERS: Season update | COWBOYS: Offseason news | POLYMARKET: Election odds
-              shifting
+              | RANGERS: Season update | COWBOYS: Offseason news | POLYMARKET: Election odds shifting
             </div>
           </div>
         </div>
