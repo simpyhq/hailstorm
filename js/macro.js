@@ -4,7 +4,7 @@ const TEN_YEAR_DEFAULT = 4.28;
 const DXY_DEFAULT = 99.8;
 const TEN_YEAR_TIMEOUT_MS = 8_000;
 const DXY_TIMEOUT_MS = 5_000;
-const DXY_URL = "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d";
+const DXY_URL = "/api/yahoo?symbol=DX-Y.NYB";
 
 let macroIntervalId = null;
 

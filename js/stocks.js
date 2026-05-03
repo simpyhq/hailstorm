@@ -244,7 +244,7 @@ function isMarketHours(now = new Date()) {
 async function fetchYahooQuote(symbol) {
   const requestSymbol = symbol === "VIX" ? "^VIX" : symbol;
   const response = await fetch(
-    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(requestSymbol)}?interval=1d&range=1d`,
+    `/api/yahoo?symbol=${encodeURIComponent(requestSymbol)}`,
   );
 
   if (!response.ok) {
