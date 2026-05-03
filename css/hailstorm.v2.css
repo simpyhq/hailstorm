@@ -480,19 +480,26 @@ body.night-mode .main-interface {
   overflow: hidden;
   border-right: 1px solid rgba(var(--primary-rgb), 0.18);
   background: rgba(10,14,26,0.65);
-  /* explicitly fill the grid cell */
   min-height: 0;
   align-self: stretch;
+  /* force children to respect flex sizing */
+  contain: layout;
 }
 
 /* ── TAB BAR ── */
 .tab-bar {
   display: flex;
   flex-direction: row;
-  flex: 0 0 38px;  /* fixed 38px, never shrink or grow */
+  flex-shrink: 0;
+  flex-grow: 0;
+  flex-basis: auto;
+  height: 38px;
   min-height: 38px;
   max-height: 38px;
   width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 10;
   border-bottom: 1px solid rgba(var(--primary-rgb), 0.35);
   background: #060b16;
   box-sizing: border-box;
