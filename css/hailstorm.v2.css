@@ -495,6 +495,7 @@ body.night-mode .main-interface {
   background: rgba(0,212,255,0.12);
   box-sizing: border-box;
   grid-row: 1;
+  grid-column: 1;
 }
 
 .tab-btn {
@@ -535,12 +536,15 @@ body.night-mode .main-interface {
   overflow-x: hidden;
   padding: 8px;
   grid-row: 2;
+  grid-column: 1;
   scrollbar-width: thin;
   scrollbar-color: rgba(var(--primary-rgb), 0.2) transparent;
 }
 
 .tab-pane.active {
   display: flex;
+  grid-row: 2;
+  grid-column: 1;
 }
 
 .tab-pane .hud-widget {
