@@ -369,12 +369,8 @@ body.night-mode .main-interface {
 .top-bar__center {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  /* truly center in the bar regardless of left/right content */
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .top-bar__stocks {
@@ -1096,13 +1092,13 @@ body.night-mode .main-interface {
   overflow: hidden;
   display: flex;
   align-items: center;
+  justify-content: center;
   height: 100%;
 }
 
 .ticker-track {
-  display: flex;
-  width: 100%;
-  min-width: max-content;
+  display: inline-flex;
+  width: max-content;
   white-space: nowrap;
   color: var(--primary-color);
   font-size: 0.7rem;
