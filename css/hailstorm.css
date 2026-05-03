@@ -60,11 +60,12 @@ input {
 }
 
 .main-interface {
-  opacity: 0;
+  opacity: 1;
   filter: brightness(1);
   transition: opacity 1.2s ease, filter 1s ease;
 }
 
+/* Boot overlay covers everything; once it fades, interface is already visible */
 .main-interface.is-visible {
   opacity: 1;
 }
@@ -310,21 +311,19 @@ body.night-mode .main-interface {
 
 .top-bar {
   top: 0;
-  height: calc(48px + env(safe-area-inset-top, 0px));
-  padding-top: calc(0px + env(safe-area-inset-top, 0px));
-  padding-left: calc(20px + env(safe-area-inset-left, 0px));
-  padding-right: calc(20px + env(safe-area-inset-right, 0px));
+  height: 48px;
+  padding-left: 20px;
+  padding-right: 20px;
   justify-content: space-between;
+  z-index: 100;
 }
 
 .bottom-bar {
   bottom: 0;
-  height: calc(40px + env(safe-area-inset-bottom, 0px));
+  height: 40px;
   padding: 0 12px;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  padding-left: calc(12px + env(safe-area-inset-left, 0px));
-  padding-right: calc(12px + env(safe-area-inset-right, 0px));
   overflow: hidden;
+  z-index: 100;
 }
 
 .jarvis-logo,
@@ -467,40 +466,47 @@ body.night-mode .main-interface {
 .main-frame {
   display: grid;
   grid-template-columns: 260px 1fr;
-  height: calc(100vh - calc(48px + env(safe-area-inset-top, 0px)) - calc(40px + env(safe-area-inset-bottom, 0px)));
-  margin-top: calc(48px + env(safe-area-inset-top, 0px));
+  /* exact space between fixed top bar (48px) and fixed bottom bar (40px) */
+  height: calc(100dvh - 48px - 40px);
+  margin-top: 48px;
   overflow: hidden;
   padding: 0;
   gap: 0;
 }
 
-/* ── LEFT PANEL: fixed height, tabbed ── */
+/* ── LEFT PANEL ── */
 .left-panel {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid rgba(var(--primary-rgb), 0.18);
-  background: rgba(10,14,26,0.6);
+  height: 100%;
   overflow: hidden;
-  /* always visible — no opacity animation to prevent blank panel bug */
+  border-right: 1px solid rgba(var(--primary-rgb), 0.18);
+  background: rgba(10,14,26,0.65);
 }
 
 /* ── TAB BAR ── */
 .tab-bar {
-  display: flex;
-  border-bottom: 1px solid rgba(var(--primary-rgb), 0.2);
+  display: flex !important;
+  flex-direction: row !important;
   flex-shrink: 0;
+  height: 36px;
+  border-bottom: 1px solid rgba(var(--primary-rgb), 0.25);
+  background: rgba(10,14,26,0.9);
 }
 
 .tab-btn {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--text-dim);
+  color: rgba(140, 240, 255, 0.45);
   font-family: "Orbitron", sans-serif;
-  font-size: 0.55rem;
-  letter-spacing: 0.18em;
-  padding: 10px 4px;
+  font-size: 0.52rem;
+  letter-spacing: 0.16em;
+  padding: 0;
   cursor: pointer;
   transition: color 0.2s ease, border-color 0.2s ease;
 }
@@ -512,22 +518,22 @@ body.night-mode .main-interface {
 .tab-btn.active {
   color: var(--primary-color);
   border-bottom-color: var(--primary-color);
-  text-shadow: var(--text-glow);
+  text-shadow: 0 0 8px rgba(var(--primary-rgb), 0.8);
 }
 
 /* ── TAB PANES ── */
 .tab-pane {
   display: none;
   flex-direction: column;
-  gap: 0;
   overflow-y: auto;
   flex: 1;
   padding: 8px;
   scrollbar-width: thin;
+  scrollbar-color: rgba(var(--primary-rgb), 0.2) transparent;
 }
 
 .tab-pane.active {
-  display: flex;
+  display: flex !important;
 }
 
 .tab-pane .hud-widget {
@@ -540,11 +546,10 @@ body.night-mode .main-interface {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* orb takes flex-1, chat bar is fixed at bottom */
-  justify-content: flex-end;
-  position: relative;
-  overflow: hidden;
+  justify-content: space-between;
   height: 100%;
+  overflow: hidden;
+  position: relative;
 }
 
 .hud-widget,
@@ -873,33 +878,21 @@ body.night-mode .main-interface {
   justify-content: center;
   flex: 1;
   min-height: 0;
-  position: relative;
-  background: radial-gradient(circle at center, rgba(var(--primary-rgb), 0.1), transparent 55%);
   width: 100%;
-  /* start visible — JS adds scale-in for boot animation */
-  opacity: 1;
-  transform: scale(1);
-  transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+  position: relative;
+  background: radial-gradient(circle at center, rgba(var(--primary-rgb), 0.08), transparent 55%);
 }
 
-/* Boot reveal still works when JS fires */
-.main-interface:not(.is-visible) .orb-stage {
-  opacity: 0;
-  transform: scale(0.94);
-}
-
-.orb-stage.scale-in {
-  transform: scale(1);
-  opacity: 1;
-}
+.orb-stage.scale-in { /* kept for JS compat */ }
 
 #jarvis-orb {
-  /* size relative to available height so it never overflows */
-  width: min(420px, 55vh, 90%);
-  max-width: 420px;
-  aspect-ratio: 1;
+  /* square canvas, size based on the shorter of width or height */
+  width: min(360px, 45vh, 80%);
+  height: min(360px, 45vh, 80%);
+  max-width: 360px;
+  max-height: 360px;
   cursor: pointer;
-  filter: drop-shadow(0 0 40px rgba(var(--primary-rgb), 0.35));
+  filter: drop-shadow(0 0 36px rgba(var(--primary-rgb), 0.35));
 }
 
 .center-copy {
@@ -1449,14 +1442,13 @@ body.night-mode .main-interface {
 /* ── INLINE CHAT ── */
 .inline-chat {
   width: 100%;
-  max-width: 700px;
-  /* fixed height slot at bottom of center panel */
-  padding: 8px 28px 14px;
+  max-width: 680px;
+  /* sits at the bottom of center panel, above the fixed ticker */
+  padding: 6px 24px 14px;
   display: flex;
   flex-direction: column;
   gap: 0;
   flex-shrink: 0;
-  background: linear-gradient(to top, rgba(10,14,26,0.95) 70%, transparent);
 }
 
 .chat-history-inline {
