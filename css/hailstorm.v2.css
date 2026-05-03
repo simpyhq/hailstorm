@@ -530,22 +530,12 @@ body.night-mode .main-interface {
 
 /* ── TAB PANES ── */
 .tab-pane {
-  display: none;
-  flex-direction: column;
-  position: absolute;
-  top: 38px; /* below tab bar */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 8px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(var(--primary-rgb), 0.2) transparent;
+  display: block; /* JS controls visibility */
+  padding: 4px 0;
 }
 
 .tab-pane.active {
-  display: flex;
+  display: block;
 }
 
 .tab-pane .hud-widget {

@@ -72,13 +72,16 @@
       <!-- MAIN GRID -->
       <main class="main-frame">
 
+        <!-- TAB BAR: standalone element outside the panel -->
+        <div id="standalone-tab-bar" style="position:fixed;top:48px;left:0;width:260px;height:38px;display:flex;z-index:50;background:#051020;border-bottom:1px solid rgba(0,212,255,0.4);border-right:1px solid rgba(0,212,255,0.18);box-sizing:border-box;">
+          <button onclick="window._switchTab('intel')" id="stab-intel" style="flex:1;border:none;border-bottom:2px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;font-family:Orbitron,sans-serif;font-size:0.5rem;letter-spacing:0.12em;cursor:pointer;">INTEL</button>
+          <button onclick="window._switchTab('markets')" id="stab-markets" style="flex:1;border:none;border-bottom:2px solid transparent;background:transparent;color:rgba(0,212,255,0.5);font-family:Orbitron,sans-serif;font-size:0.5rem;letter-spacing:0.12em;cursor:pointer;">MARKETS</button>
+          <button onclick="window._switchTab('life')" id="stab-life" style="flex:1;border:none;border-bottom:2px solid transparent;background:transparent;color:rgba(0,212,255,0.5);font-family:Orbitron,sans-serif;font-size:0.5rem;letter-spacing:0.12em;cursor:pointer;">LIFE</button>
+        </div>
+
         <!-- LEFT PANEL — TABBED WIDGETS -->
-        <aside id="left-panel" class="left-panel" style="position:relative;overflow:hidden;">
-          <div class="tab-bar">
-            <button class="tab-btn active" data-tab="intel">INTEL</button>
-            <button class="tab-btn" data-tab="markets">MARKETS</button>
-            <button class="tab-btn" data-tab="life">LIFE</button>
-          </div>
+        <aside id="left-panel" class="left-panel" style="position:relative;overflow-y:auto;overflow-x:hidden;padding-top:38px;">
+
 
           <!-- INTEL TAB: Weather, Canvas, Macro, System -->
           <div class="tab-pane active" id="tab-intel">
@@ -255,71 +258,22 @@
     </div>
 
     <script>
-    // Tab system — runs immediately, no CSS dependency
-    window.addEventListener('load', function() {
-      const panel = document.getElementById('left-panel');
-      console.log('TAB INIT: panel=', panel, 'height=', panel && panel.getBoundingClientRect().height);
-      if (!panel) return;
-
-      // Measure actual rendered height
-      const h = panel.getBoundingClientRect().height || (window.innerHeight - 88);
-
-      // Style the tab bar inline
-      const tabBar = panel.querySelector('.tab-bar');
-      if (tabBar) {
-        tabBar.style.cssText = [
-          'position:absolute', 'top:0', 'left:0', 'right:0', 'height:38px',
-          'display:flex', 'flex-direction:row', 'z-index:99',
-          'background:rgba(0,30,50,0.98)',
-          'border-bottom:1px solid rgba(0,212,255,0.4)',
-          'box-sizing:border-box'
-        ].join(';');
-      }
-
-      // Style each tab button
-      const btns = panel.querySelectorAll('.tab-btn');
-      btns.forEach(function(btn) {
-        btn.style.cssText = [
-          'flex:1', 'height:38px', 'display:flex', 'align-items:center',
-          'justify-content:center', 'border:none', 'background:transparent',
-          'color:rgba(0,212,255,0.65)', 'font-family:Orbitron,sans-serif',
-          'font-size:0.5rem', 'letter-spacing:0.14em', 'cursor:pointer',
-          'border-bottom:2px solid transparent'
-        ].join(';');
+    // Global tab switch function - called by standalone tab bar buttons
+    window._switchTab = function(name) {
+      var tabs = ['intel','markets','life'];
+      tabs.forEach(function(t) {
+        var pane = document.getElementById('tab-' + t);
+        var btn = document.getElementById('stab-' + t);
+        if (pane) pane.style.display = (t === name) ? 'block' : 'none';
+        if (btn) {
+          btn.style.color = (t === name) ? '#00d4ff' : 'rgba(0,212,255,0.45)';
+          btn.style.borderBottom = (t === name) ? '2px solid #00d4ff' : '2px solid transparent';
+          btn.style.background = (t === name) ? 'rgba(0,212,255,0.1)' : 'transparent';
+        }
       });
-
-      // Style each pane
-      const panes = panel.querySelectorAll('.tab-pane');
-      panes.forEach(function(pane) {
-        pane.style.cssText = [
-          'position:absolute', 'top:38px', 'left:0', 'right:0', 'bottom:0',
-          'overflow-y:auto', 'overflow-x:hidden', 'padding:8px',
-          'flex-direction:column', 'display:none'
-        ].join(';');
-      });
-
-      // Activate first tab
-      function activateTab(tabName) {
-        btns.forEach(function(b) {
-          const active = b.dataset.tab === tabName;
-          b.style.color = active ? '#00d4ff' : 'rgba(0,212,255,0.55)';
-          b.style.borderBottom = active ? '2px solid #00d4ff' : '2px solid transparent';
-          b.style.background = active ? 'rgba(0,212,255,0.08)' : 'transparent';
-        });
-        panes.forEach(function(p) {
-          const active = p.id === 'tab-' + tabName;
-          p.style.display = active ? 'flex' : 'none';
-        });
-      }
-
-      // Bind clicks
-      btns.forEach(function(btn) {
-        btn.addEventListener('click', function() { activateTab(btn.dataset.tab); });
-      });
-
-      // Initial state
-      activateTab('intel');
-    });
+    };
+    // Show intel on load
+    window.addEventListener('load', function() { window._switchTab('intel'); });
     </script>
     <script type="module" src="./js/app.js"></script>
     <div id="flash-overlay" aria-hidden="true"></div>
