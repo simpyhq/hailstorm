@@ -553,7 +553,7 @@ body.night-mode .main-interface {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 22px;
   padding: 20px 14px 24px;
 }
 
@@ -592,15 +592,15 @@ body.night-mode .main-interface {
 }
 
 .hud-widget {
-  padding: 16px;
+  padding: 22px 20px;
   border-radius: 14px;
 }
 
 .hud-widget h2 {
   margin: 0 0 12px;
-  font-size: 0.68rem;
+  font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.16em;
   transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
@@ -623,7 +623,7 @@ body.night-mode .main-interface {
 .widget-grid,
 .widget-list,
 .stat-row {
-  font-size: 0.68rem;
+  font-size: 0.9rem;
   color: var(--text-dim);
 }
 
@@ -640,21 +640,21 @@ body.night-mode .main-interface {
 }
 
 .weather-temp {
-  font-size: 2rem;
+  font-size: 3.2rem;
   line-height: 1;
   color: var(--primary-color);
   text-shadow: var(--text-glow);
 }
 
 .weather-condition {
-  font-size: 0.8rem;
+  font-size: 1rem;
   letter-spacing: 0.18em;
   color: var(--ok-color);
 }
 
 .weather-meta,
 .weather-location {
-  font-size: 0.68rem;
+  font-size: 0.85rem;
   color: var(--text-dim);
   letter-spacing: 0.12em;
 }
@@ -713,7 +713,7 @@ body.night-mode .main-interface {
   align-items: center;
   padding: 5px 0;
   border-top: 1px solid rgba(var(--primary-rgb), 0.1);
-  font-size: 0.65rem;
+  font-size: 0.85rem;
   gap: 8px;
 }
 
@@ -786,13 +786,13 @@ body.night-mode .main-interface {
 }
 
 .stat-label {
-  font-size: 0.6rem;
+  font-size: 0.78rem;
   color: var(--text-dim);
   letter-spacing: 0.14em;
 }
 
 .stat-val {
-  font-size: 0.72rem;
+  font-size: 0.95rem;
   color: var(--primary-color);
   font-weight: 700;
   text-shadow: var(--text-glow);
@@ -853,27 +853,27 @@ body.night-mode .main-interface {
 }
 
 .sport-label {
-  font-size: 0.6rem;
+  font-size: 0.78rem;
   color: var(--text-dim);
   letter-spacing: 0.14em;
   min-width: 30px;
 }
 
 .sport-score {
-  font-size: 0.65rem;
+  font-size: 0.95rem;
   color: var(--primary-color);
   text-align: right;
 }
 
 .macro-label {
-  font-size: 0.6rem;
+  font-size: 0.78rem;
   color: var(--text-dim);
   letter-spacing: 0.14em;
   min-width: 36px;
 }
 
 .macro-value {
-  font-size: 0.72rem;
+  font-size: 0.95rem;
   color: var(--primary-color);
   font-weight: 700;
   text-shadow: var(--text-glow);
@@ -911,10 +911,10 @@ body.night-mode .main-interface {
 
 #jarvis-orb {
   /* square canvas, size based on the shorter of width or height */
-  width: min(360px, 45vh, 80%);
-  height: min(360px, 45vh, 80%);
-  max-width: 360px;
-  max-height: 360px;
+  width: min(520px, 60vh, 80%);
+  height: min(520px, 60vh, 80%);
+  max-width: 520px;
+  max-height: 520px;
   cursor: pointer;
   filter: drop-shadow(0 0 36px rgba(var(--primary-rgb), 0.35));
 }
