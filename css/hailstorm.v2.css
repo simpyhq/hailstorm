@@ -558,7 +558,8 @@ body.night-mode .main-interface {
   height: 100%;
   overflow: hidden;
   position: relative;
-  padding-bottom: 8px;
+  /* bottom padding lifts chat above the fixed news ticker */
+  padding-bottom: 52px;
 }
 
 .hud-widget,
