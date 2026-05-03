@@ -546,16 +546,21 @@ body.night-mode .main-interface {
 
 /* ── TAB PANES ── */
 .tab-pane {
-  display: block; /* JS controls visibility */
-  padding: 4px 0;
+  display: block;
+  padding: 12px 10px;
 }
 
 .tab-pane.active {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* center widgets horizontally */
+  gap: 10px;
+  padding: 12px 10px;
 }
 
 .tab-pane .hud-widget {
-  margin-bottom: 8px;
+  width: 100%;
+  max-width: 240px; /* consistent width so they sit centered cleanly */
   flex-shrink: 0;
 }
 
