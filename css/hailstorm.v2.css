@@ -477,28 +477,24 @@ body.night-mode .main-interface {
 
 /* ── LEFT PANEL ── */
 .left-panel {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 38px 1fr; /* tab bar fixed, content fills rest */
   overflow: hidden;
   border-right: 1px solid rgba(var(--primary-rgb), 0.18);
   background: rgba(10,14,26,0.65);
-  height: 100%; /* explicitly take full grid cell height */
+  height: 100%;
 }
 
 /* ── TAB BAR ── */
 .tab-bar {
   display: flex;
   flex-direction: row;
-  flex-shrink: 0;
-  flex-grow: 0;
   width: 100%;
   height: 38px;
-  line-height: 38px;
   border-bottom: 1px solid rgba(var(--primary-rgb), 0.35);
   background: rgba(0,212,255,0.12);
   box-sizing: border-box;
-  /* clip overflowing tab-pane content */
-  overflow: hidden;
+  grid-row: 1;
 }
 
 .tab-btn {
@@ -535,12 +531,10 @@ body.night-mode .main-interface {
 .tab-pane {
   display: none;
   flex-direction: column;
-  /* scroll happens here, NOT on the parent */
   overflow-y: auto;
   overflow-x: hidden;
-  flex: 1;
-  min-height: 0;
   padding: 8px;
+  grid-row: 2;
   scrollbar-width: thin;
   scrollbar-color: rgba(var(--primary-rgb), 0.2) transparent;
 }
