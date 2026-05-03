@@ -299,14 +299,19 @@ body.night-mode .main-interface {
   position: fixed;
   left: 0;
   right: 0;
+  width: 100%;
   display: flex;
   align-items: center;
-  padding: 0 20px;
-  background: rgba(10, 14, 26, 0.92);
-  border: 1px solid rgba(var(--primary-rgb), 0.38);
-  box-shadow: var(--border-glow);
-  backdrop-filter: blur(14px);
+  padding: 0 16px;
+  background: rgba(8, 11, 20, 0.97);
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: 1px solid rgba(var(--primary-rgb), 0.25);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+  backdrop-filter: blur(16px);
   z-index: 20;
+  box-sizing: border-box;
 }
 
 .top-bar {
@@ -326,10 +331,14 @@ body.night-mode .main-interface {
   left: 0;
   right: 0;
   height: 40px;
-  padding: 0 12px;
+  padding: 0; /* no side padding — ticker fills edge to edge */
   overflow: hidden;
   z-index: 100;
   width: 100%;
+  border-top: 1px solid rgba(var(--primary-rgb), 0.25);
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
 }
 
 .jarvis-logo,
