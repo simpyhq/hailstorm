@@ -1085,11 +1085,15 @@ body.night-mode .main-interface {
 .ticker-mask {
   width: 100%;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 .ticker-track {
-  display: inline-flex;
-  width: max-content;
+  display: flex;
+  width: 100%;
+  min-width: max-content;
   white-space: nowrap;
   color: var(--primary-color);
   font-size: 0.7rem;
@@ -1097,6 +1101,7 @@ body.night-mode .main-interface {
   text-shadow: var(--text-glow);
   animation: ticker-scroll 55s linear infinite;
   will-change: transform;
+  align-items: center;
 }
 
 .ticker-copy {
