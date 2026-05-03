@@ -228,7 +228,7 @@ function initSystems() {
   initQuote();
   initSpotify();
   initEmailWidget();
-  initTradingView();
+  try { initTradingView(); } catch (e) { console.warn("TradingView init failed:", e); }
 }
 
 function skipBoot() {
