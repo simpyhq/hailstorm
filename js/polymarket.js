@@ -103,6 +103,7 @@ function renderFallback() {
   }
 
   list.innerHTML = `<div class="widget-row"><span>N/A</span></div>`;
+  list.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
 }
 
 function renderMarkets(markets) {
@@ -116,6 +117,7 @@ function renderMarkets(markets) {
     return;
   }
 
+  list.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
   list.innerHTML = markets
     .map((market) => {
       const probabilityText = `${Math.round(market.probability)}%`;

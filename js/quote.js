@@ -33,5 +33,7 @@ export function initQuote() {
 
   const quote = getDailyQuote();
   textEl.textContent = `"${quote.text}"`;
+  textEl.classList.remove('skeleton');
   authorEl.textContent = `— ${quote.author}`;
+  authorEl.classList.remove('skeleton');
 }

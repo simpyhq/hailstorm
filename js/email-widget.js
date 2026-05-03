@@ -17,12 +17,14 @@ function renderFallback(msg = "--") {
   const listEl = getListEl();
   if (!listEl) return;
   listEl.innerHTML = `<div class="widget-row"><span class="email-subject">${msg}</span></div>`;
+  listEl.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
 }
 
 function renderEmails(emails) {
   const listEl = getListEl();
   if (!listEl || !emails.length) { renderFallback("No new email"); return; }
 
+  listEl.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
   listEl.replaceChildren(
     ...emails.slice(0, 4).map((email) => {
       const row = document.createElement("div");
@@ -71,7 +73,6 @@ export function initEmailWidget() {
     }
   };
 
-  renderFallback("Loading...");
   refresh();
   setInterval(refresh, REFRESH_MS);
 }

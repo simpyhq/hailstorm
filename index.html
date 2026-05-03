@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./css/hailstorm.v2.css?v=20260503o" />
+    <link rel="stylesheet" href="./css/hailstorm.v2.css?v=20260503p" />
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
   </head>
   <body class="hailstorm-shell">
@@ -42,6 +42,12 @@
       </div>
       <button id="boot-skip" class="boot-skip-btn">SKIP ▶</button>
     </div>
+
+    <!-- ── CORNER BRACKETS ── -->
+    <div class="screen-corner tl" aria-hidden="true"></div>
+    <div class="screen-corner tr" aria-hidden="true"></div>
+    <div class="screen-corner bl" aria-hidden="true"></div>
+    <div class="screen-corner br" aria-hidden="true"></div>
 
     <!-- ── MAIN INTERFACE ── -->
     <div id="main-interface" class="main-interface">
@@ -101,7 +107,7 @@
             <section class="hud-widget">
               <h2>CANVAS</h2>
               <div id="canvas-list" class="widget-list">
-                <div class="canvas-row"><span>Loading...</span></div>
+                <div class="canvas-row"><span class="skeleton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
               </div>
             </section>
 
@@ -139,7 +145,7 @@
             <section class="hud-widget">
               <h2 class="bruce-heading">BRUCE &mdash; OPTIONS</h2>
               <div class="bruce-widget">
-                <div id="bruce-status" class="bruce-status">-- CHECKING --</div>
+                <div id="bruce-status" class="bruce-status skeleton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                 <div id="bruce-trade-1" class="bruce-trade">No active trades</div>
                 <div id="bruce-pnl" class="bruce-pnl">P&amp;L: --</div>
               </div>
@@ -149,16 +155,16 @@
             <section class="hud-widget">
               <h2>POLYMARKET</h2>
               <div id="polymarket-list" class="widget-list">
-                <div class="widget-row"><span>Loading markets...</span></div>
+                <div class="widget-row"><span class="skeleton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
               </div>
             </section>
 
             <section class="hud-widget">
               <h2>DALLAS SPORTS</h2>
               <div class="widget-list">
-                <div class="widget-row"><span class="sport-label">TEX</span><span id="rangers-score" class="sport-score">Loading...</span></div>
-                <div class="widget-row"><span class="sport-label">MAV</span><span id="mavs-score" class="sport-score">Loading...</span></div>
-                <div class="widget-row"><span class="sport-label">DAL</span><span id="cowboys-score" class="sport-score">Loading...</span></div>
+                <div class="widget-row"><span class="sport-label">TEX</span><span id="rangers-score" class="sport-score skeleton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+                <div class="widget-row"><span class="sport-label">MAV</span><span id="mavs-score" class="sport-score skeleton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+                <div class="widget-row"><span class="sport-label">DAL</span><span id="cowboys-score" class="sport-score skeleton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
               </div>
             </section>
           </div>
@@ -173,7 +179,7 @@
                   <div id="spotify-art-placeholder" class="spotify-art-placeholder">&#9835;</div>
                 </div>
                 <div class="spotify-info">
-                  <div id="spotify-track" class="spotify-track">Not connected</div>
+                  <div id="spotify-track" class="spotify-track skeleton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                   <div id="spotify-artist" class="spotify-artist">--</div>
                   <div class="spotify-controls">
                     <button id="spotify-prev" class="spotify-btn" aria-label="Previous">&#9664;&#9664;</button>
@@ -190,7 +196,7 @@
             <section class="hud-widget">
               <h2>EMAIL</h2>
               <div id="email-list" class="widget-list">
-                <div class="widget-row"><span class="email-subject">Loading...</span></div>
+                <div class="widget-row"><span class="email-subject skeleton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
               </div>
             </section>
 
@@ -208,7 +214,7 @@
             <section class="hud-widget">
               <h2>QUOTE</h2>
               <div id="quote-widget" class="quote-widget">
-                <p id="quote-text" class="quote-text">Loading...</p>
+                <p id="quote-text" class="quote-text skeleton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
                 <p id="quote-author" class="quote-author">--</p>
               </div>
             </section>

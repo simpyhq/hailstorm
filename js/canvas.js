@@ -36,6 +36,7 @@ function getUrgencyClass(dateString) {
 
 function renderFallback(listEl, message = "--") {
   listEl.innerHTML = `<div class="canvas-row"><span>${message}</span></div>`;
+  listEl.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
 }
 
 function renderAssignments(listEl, assignments) {
@@ -44,6 +45,7 @@ function renderAssignments(listEl, assignments) {
     return;
   }
 
+  listEl.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
   listEl.replaceChildren(
     ...assignments.map((assignment) => {
       const row = document.createElement("div");

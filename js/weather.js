@@ -42,6 +42,7 @@ function updateText(id, value) {
   const element = document.getElementById(id);
   if (element) {
     element.textContent = value;
+    element.classList.remove('skeleton');
   }
 }
 

@@ -121,8 +121,8 @@ function updateUI({ track, artist, artUrl, progressPct, isPlaying }) {
   const progressEl = document.getElementById("spotify-progress");
   const playBtn = document.getElementById("spotify-play");
 
-  if (trackEl) trackEl.textContent = track || "--";
-  if (artistEl) artistEl.textContent = artist || "--";
+  if (trackEl) { trackEl.textContent = track || "--"; trackEl.classList.remove('skeleton'); }
+  if (artistEl) { artistEl.textContent = artist || "--"; artistEl.classList.remove('skeleton'); }
   if (progressEl) progressEl.style.width = `${progressPct || 0}%`;
   if (playBtn) playBtn.innerHTML = isPlaying ? "&#9646;&#9646;" : "&#9654;";
 

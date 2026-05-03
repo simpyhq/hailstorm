@@ -43,6 +43,7 @@ function updateMarketStatus(statusEl) {
   statusEl.textContent = open ? "🟢 MARKET OPEN" : "🔴 MARKET CLOSED";
   statusEl.style.color = open ? "#81ff9b" : "var(--text-dim)";
   statusEl.style.textShadow = open ? "0 0 10px rgba(129, 255, 155, 0.65)" : "none";
+  statusEl.classList.remove('skeleton');
 }
 
 export function initBruce() {

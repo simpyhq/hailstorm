@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
 :root {
   --bg-main: #0a0e1a;
   --bg-panel: #0d1220;
@@ -593,7 +595,8 @@ body.night-mode .main-interface {
 
 .hud-widget {
   padding: 22px 20px;
-  border-radius: 14px;
+  border-radius: 0;
+  clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
 }
 
 .hud-widget h2 {
@@ -602,6 +605,26 @@ body.night-mode .main-interface {
   font-weight: 700;
   letter-spacing: 0.16em;
   transition: color 0.2s ease, text-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hud-widget h2::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--primary-color);
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px var(--glow-color);
+  flex-shrink: 0;
+}
+
+.hud-widget h2::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(var(--primary-rgb), 0.45), transparent);
 }
 
 /* Deep-link headers get a subtle glow on hover/tap */
@@ -611,14 +634,7 @@ body.night-mode .main-interface {
   text-shadow: 0 0 10px var(--glow-color), 0 0 22px rgba(var(--primary-rgb), 0.6);
 }
 
-.hud-widget h2[style*="cursor: pointer"]::after,
-.hud-widget h2[style*="cursor:pointer"]::after {
-  content: " ↗";
-  font-size: 0.55rem;
-  opacity: 0.45;
-  vertical-align: super;
-  letter-spacing: 0;
-}
+/* ↗ indicator removed — ::after is now used for rule-line on all h2 */
 
 .widget-grid,
 .widget-list,
@@ -637,6 +653,17 @@ body.night-mode .main-interface {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.weather-temp,
+.stat-val,
+.macro-value,
+.sport-score,
+.stock-ticker-chip__value,
+.clock-readout,
+.canvas-due {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 .weather-temp {
@@ -1442,6 +1469,45 @@ body.night-mode .main-interface {
   color: rgba(var(--primary-rgb), 0.45);
   letter-spacing: 0.14em;
   text-align: right;
+}
+
+/* ── Screen Corner Brackets ── */
+.screen-corner {
+  position: fixed;
+  width: 28px;
+  height: 28px;
+  border-color: var(--primary-color);
+  z-index: 200;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px var(--glow-color));
+}
+
+.screen-corner.tl { top: 8px; left: 8px; border-top: 2px solid; border-left: 2px solid; }
+.screen-corner.tr { top: 8px; right: 8px; border-top: 2px solid; border-right: 2px solid; }
+.screen-corner.bl { bottom: 8px; left: 8px; border-bottom: 2px solid; border-left: 2px solid; }
+.screen-corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid; border-right: 2px solid; }
+
+/* ── Skeleton States ── */
+.skeleton {
+  position: relative;
+  color: transparent !important;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--primary-rgb), 0.04) 0%,
+    rgba(var(--primary-rgb), 0.12) 50%,
+    rgba(var(--primary-rgb), 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.8s ease-in-out infinite;
+  border-radius: 3px;
+  min-height: 1em;
+  min-width: 60px;
+  display: inline-block;
+}
+
+@keyframes skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* ── Focus Mode Button ── */
