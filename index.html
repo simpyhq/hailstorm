@@ -50,11 +50,11 @@
       <!-- TOP BAR -->
       <header class="hud-bar top-bar" style="flex-direction:column;height:auto;padding:0;">
         <!-- Row 1: Identity + Controls -->
-        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 16px;height:32px;flex-shrink:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 16px;height:46px;flex-shrink:0;">
           <div style="display:flex;align-items:center;gap:14px;">
-            <span class="jarvis-logo" style="font-size:0.85rem;">J.A.R.V.I.S.</span>
-            <div id="clock" class="clock-readout" style="font-size:0.78rem;">00:00:00</div>
-            <div id="date" class="date-readout" style="font-size:0.58rem;">SAT, MAY 2</div>
+            <span class="jarvis-logo" style="font-size:1.15rem;">J.A.R.V.I.S.</span>
+            <div id="clock" class="clock-readout" style="font-size:1rem;">00:00:00</div>
+            <div id="date" class="date-readout" style="font-size:0.78rem;">SAT, MAY 2</div>
           </div>
           <div style="display:flex;align-items:center;gap:10px;">
             <div class="status-pill"><span class="status-dot"></span><span>SYSTEM</span></div>
@@ -64,7 +64,7 @@
           </div>
         </div>
         <!-- Row 2: Full-width Stock Ticker -->
-        <div id="stock-ticker" style="width:100%;height:22px;overflow:hidden;border-top:1px solid rgba(0,212,255,0.15);display:flex;align-items:center;" aria-label="Market ticker">
+        <div id="stock-ticker" style="width:100%;height:26px;overflow:hidden;border-top:1px solid rgba(0,212,255,0.15);display:flex;align-items:center;" aria-label="Market ticker">
           <div id="stock-ticker-strip" class="stock-ticker-strip" style="margin:0;width:100%;">
             <div id="stock-ticker-inner" class="stock-ticker-inner"></div>
           </div>
@@ -75,14 +75,14 @@
       <main class="main-frame">
 
         <!-- TAB BAR: standalone element outside the panel -->
-        <div id="standalone-tab-bar" style="position:fixed;top:54px;left:0;width:300px;height:34px;display:flex;z-index:60;background:rgba(8,11,20,0.97);border-bottom:1px solid rgba(0,212,255,0.25);border-right:1px solid rgba(0,212,255,0.18);box-sizing:border-box;">
+        <div id="standalone-tab-bar" style="position:fixed;top:68px;left:0;width:300px;height:34px;display:flex;z-index:60;background:rgba(8,11,20,0.97);border-bottom:1px solid rgba(0,212,255,0.25);border-right:1px solid rgba(0,212,255,0.18);box-sizing:border-box;">
           <button onclick="window._switchTab('intel')" id="stab-intel" style="flex:1;border:none;border-bottom:2px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;font-family:Orbitron,sans-serif;font-size:0.5rem;letter-spacing:0.12em;cursor:pointer;">INTEL</button>
           <button onclick="window._switchTab('markets')" id="stab-markets" style="flex:1;border:none;border-bottom:2px solid transparent;background:transparent;color:rgba(0,212,255,0.5);font-family:Orbitron,sans-serif;font-size:0.5rem;letter-spacing:0.12em;cursor:pointer;">MARKETS</button>
           <button onclick="window._switchTab('life')" id="stab-life" style="flex:1;border:none;border-bottom:2px solid transparent;background:transparent;color:rgba(0,212,255,0.5);font-family:Orbitron,sans-serif;font-size:0.5rem;letter-spacing:0.12em;cursor:pointer;">LIFE</button>
         </div>
 
         <!-- LEFT PANEL — TABBED WIDGETS -->
-        <aside id="left-panel" class="left-panel" style="position:relative;overflow-y:auto;overflow-x:hidden;padding-top:52px;">
+        <aside id="left-panel" class="left-panel" style="position:relative;overflow-y:auto;overflow-x:hidden;padding-top:42px;">
 
 
           <!-- INTEL TAB: Weather, Canvas, Macro, System -->
