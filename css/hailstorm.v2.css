@@ -318,10 +318,10 @@ body.night-mode .main-interface {
   top: 0;
   left: 0;
   right: 0;
-  height: 48px;
-  padding-left: 20px;
-  padding-right: 20px;
-  justify-content: space-between;
+  height: 54px;
+  padding: 0;
+  justify-content: flex-start;
+  align-items: flex-start;
   z-index: 100;
   width: 100%;
   position: fixed;
@@ -483,9 +483,8 @@ body.night-mode .main-interface {
 .main-frame {
   display: grid;
   grid-template-columns: 260px 1fr;
-  /* top bar 48px + tab bar 36px = 84px; bottom ticker 40px */
-  height: calc(100vh - 48px - 40px);
-  margin-top: 48px;
+  height: calc(100vh - 54px - 40px);
+  margin-top: 54px;
   margin-bottom: 40px;
   overflow: hidden;
   padding: 0;
