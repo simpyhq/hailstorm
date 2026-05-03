@@ -9,16 +9,16 @@ const FEEDS = [
     url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnypost.com%2Fbusiness%2Ffeed%2F",
   },
   {
-    source: "WASHINGTON EXAMINER",
-    url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.washingtonexaminer.com%2Ffeed",
+    source: "WSJ",
+    url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Ffeeds.a.dj.com%2Frss%2FRSSMarketsMain.xml",
   },
   {
-    source: "HEALTH",
-    url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fpubmed.ncbi.nlm.nih.gov%2Frss%2Fsearch%2F%3Fterm%3DIgA%2BNephropathy%26format%3Drss",
+    source: "ESPN NFL",
+    url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.espn.com%2Fespn%2Frss%2Fnfl%2Fnews",
   },
   {
-    source: "MEDICAL",
-    url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Frss.medicalnewstoday.com%2Fnews.xml",
+    source: "FED",
+    url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.federalreserve.gov%2Freleases%2Frss%2Fmonetary.xml",
   },
 ];
 
