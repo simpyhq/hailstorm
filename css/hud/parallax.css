@@ -1,2 +1,19 @@
-/* parallax.css — 3D depth scaffolding.
-   Filled in Step 3 (perspective scene, depth layers, reduced-motion). */
+/* parallax.css — depth scaffolding for the rAF engine in js/hud/parallax.js.
+   The engine writes per-element transforms (with their own perspective()),
+   so depth is real 3D, not skew. These rules just promote the moving layers
+   to their own compositor layers and shape the panel's tilt surface. */
+
+#orb-wrap, .cc, .bc, .gp-tilt, .hex-grid { will-change: transform; }
+
+/* The panel's inner surface pitches forward; the frame (#glass-panel) holds
+   the slide transition so the two never fight. */
+.gp-tilt {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #orb-wrap, .cc, .bc, .gp-tilt, .hex-grid { will-change: auto; }
+}
