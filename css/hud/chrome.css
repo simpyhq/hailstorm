@@ -23,7 +23,8 @@
 .tb-dots { display:flex; gap:5px; }
 .tb-dot {
   width:5px; height:5px; border-radius:50%;
-  background:var(--green); box-shadow:0 0 5px var(--green);
+  background:var(--green);
+  box-shadow:0 0 6px var(--green), 0 0 14px rgba(129,255,155,0.6);
   animation:dotpulse 2.2s ease-in-out infinite;
 }
 .tb-dot:nth-child(2){ animation-delay:0.7s; }

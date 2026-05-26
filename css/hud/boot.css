@@ -45,7 +45,8 @@
 #boot-welcome {
   font-family:'Orbitron',sans-serif; font-size:16px; font-weight:700;
   letter-spacing:8px; color:var(--gold);
-  text-shadow:0 0 28px var(--gold); opacity:0;
+  text-shadow:0 0 18px var(--gold), 0 0 40px rgba(255,170,0,0.6), 0 0 80px rgba(255,140,0,0.35);
+  opacity:0;
   transition:opacity 0.9s ease;
 }
 

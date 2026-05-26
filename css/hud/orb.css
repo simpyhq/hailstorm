@@ -17,3 +17,17 @@
   transform:translate(-50%,-50%);
   pointer-events:none; z-index:10;
 }
+
+/* Volumetric bloom — soft light bleeding outward from the core. Sits behind
+   the corner clusters/panels (z-index 3 inside #app) so the glow spills
+   through their translucency. Pulses with the orb's breathing via --glow. */
+#orb-bloom {
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:1180px; height:1180px; border-radius:50%;
+  pointer-events:none; z-index:3;
+  background:radial-gradient(circle, rgba(0,212,255,0.12) 0%, rgba(0,150,220,0.05) 32%, transparent 62%);
+  filter:blur(26px);
+  mix-blend-mode:screen;
+  opacity:var(--glow, 0.85);
+  will-change:opacity;
+}

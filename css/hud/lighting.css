@@ -19,3 +19,39 @@
   animation:sweepmove 8s linear infinite;
 }
 @keyframes sweepmove { 0%{transform:translateY(-160px)} 100%{transform:translateY(100vh)} }
+
+/* ---- ADDITIVE LIGHT-MAP ----
+   Screen-blends the orb's light onto the panels/orb (sits below chrome at
+   z-index 180 inside #app, so it lights content but leaves the top bar crisp).
+   It "lights" what's beneath instead of tinting it. */
+.light-map {
+  position:fixed; inset:0; pointer-events:none; z-index:180;
+  mix-blend-mode:screen;
+  opacity:0.7;
+  background:
+    radial-gradient(40% 36% at 50% 52%, rgba(80,215,255,0.16), transparent 68%),
+    radial-gradient(26% 24% at 24% 50%, rgba(0,180,255,0.07), transparent 72%);
+}
+
+/* ---- LIGHT SCATTERING THROUGH THE HEX GRID ----
+   A brighter copy of the grid, masked to the orb's reach and screen-blended,
+   so the lattice only glows where the key light hits it. Pulses with --glow. */
+.hex-glow {
+  position:fixed; inset:0; pointer-events:none; z-index:1;
+  mix-blend-mode:screen;
+  opacity:calc(var(--glow, 0.85) * 0.7);
+  animation:hexdrift 72s linear infinite;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='104'%3E%3Cpolygon points='30,2 58,18 58,50 30,66 2,50 2,18' fill='none' stroke='%2300d4ff' stroke-width='0.6' opacity='0.5'/%3E%3Cpolygon points='30,54 58,70 58,102 30,118 2,102 2,70' fill='none' stroke='%2300d4ff' stroke-width='0.6' opacity='0.5'/%3E%3C/svg%3E");
+  -webkit-mask-image:radial-gradient(42% 40% at 50% 50%, #000 0%, rgba(0,0,0,0.35) 45%, transparent 72%);
+          mask-image:radial-gradient(42% 40% at 50% 50%, #000 0%, rgba(0,0,0,0.35) 45%, transparent 72%);
+}
+
+/* ---- EMISSIVE HOT-POINT UTILITIES ---- */
+.emit      { box-shadow:0 0 6px rgba(0,212,255,0.55), 0 0 18px rgba(0,212,255,0.30), 0 0 40px rgba(0,212,255,0.16); }
+.emit-text { text-shadow:0 0 8px rgba(0,212,255,0.70), 0 0 22px rgba(0,212,255,0.40); }
+.emit-gold { text-shadow:0 0 16px rgba(255,215,0,0.85), 0 0 38px rgba(255,170,0,0.50); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hex-glow { opacity:0.4; animation:none; }
+  .sweep    { animation:none; opacity:0.35; }
+}
