@@ -34,6 +34,7 @@
     add('.cc',       { tilt: 5, lift: 10, persp: 900 });
     add('.bc',       { tilt: 4, lift: 14, persp: 900 });
     add('.gp-tilt',  { tilt: 5, lift: 0,  persp: 1000 });
+    add('#telemetry', { base: 'translateY(-50%)', tilt: 4, lift: 8, persp: 900 });
     add('.hex-grid', { tilt: 0, lift: 12, far: true });
   }
 

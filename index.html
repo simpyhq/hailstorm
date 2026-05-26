@@ -56,7 +56,10 @@
       <div id="tb-clock">00:00:00</div>
     </div>
     <div class="tb-right">
-      <span>SYS NOMINAL</span>
+      <span class="tb-stat">LINK <i class="tb-dotmini"></i></span>
+      <span id="tb-pwr">PWR 3.21 GW</span>
+      <span id="tb-sig">SIG 98.7%</span>
+      <span class="tb-ok">SYS NOMINAL</span>
       <button id="nm-btn">NM</button>
     </div>
   </div>
@@ -108,7 +111,7 @@
     <div class="cc-row"><span>CPU</span><span id="s-cpu" class="cc-v">--%</span></div>
     <div class="cc-row"><span>RAM</span><span id="s-ram" class="cc-v">--%</span></div>
     <div class="cc-row"><span>DISK</span><span id="s-disk" class="cc-v">--%</span></div>
-    <div class="cc-row"><span>NET</span><span class="cc-v">12 MB/s</span></div>
+    <div class="cc-row"><span>NET</span><span id="s-net" class="cc-v">-- MB/s</span></div>
     <div style="margin-top:7px; font-size:7.5px; opacity:0.25; letter-spacing:1px;">35.2226° N // 97.4395° W</div>
   </div>
 
@@ -120,6 +123,19 @@
     </div>
     <div style="height:1px; background:rgba(0,212,255,0.06); margin-bottom:6px;"></div>
     <div style="font-size:7.5px; opacity:0.35; letter-spacing:0.7px; line-height:1.7;" id="cc-quote">—</div>
+  </div>
+
+  <!-- TELEMETRY RAIL -->
+  <div id="telemetry">
+    <div class="tm-hd">TELEMETRY // AUX</div>
+    <div class="tm-row"><span class="tm-l">BARO</span><span class="tm-v" id="tm-baro">--</span></div>
+    <div class="tm-row"><span class="tm-l">PKT LOSS</span><span class="tm-v" id="tm-pkt">--</span></div>
+    <div class="tm-row"><span class="tm-l">GPU</span><span class="tm-v" id="tm-gpu">--</span></div>
+    <div class="tm-row"><span class="tm-l">UPLINK</span><span class="tm-v" id="tm-up">--</span></div>
+    <div class="tm-row"><span class="tm-l">CORE</span><span class="tm-v" id="tm-core">--</span></div>
+    <div class="tm-row"><span class="tm-l">LATENCY</span><span class="tm-v" id="tm-lat">--</span></div>
+    <div class="tm-row"><span class="tm-l">TOK/MIN</span><span class="tm-v" id="tm-tok">--</span></div>
+    <div class="tm-foot"><span class="tm-blink">▮</span> STANDBY</div>
   </div>
 
   <!-- GLASS PANEL -->
