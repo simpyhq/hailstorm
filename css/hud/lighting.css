@@ -1,0 +1,21 @@
+/* lighting.css — the light system. Orb is the key light; everything here
+   reacts to --glow so the whole scene breathes together.
+   (Step 2 expands this: light-map, panel pickup, .emit bloom, hex scatter.) */
+
+/* ATMOSPHERE — orb light pool + horizon glow */
+.atmosphere {
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  opacity:var(--glow, 1);
+  background:
+    radial-gradient(46% 42% at 50% 50%, rgba(40,190,255,0.10), transparent 72%),
+    radial-gradient(120% 60% at 50% 116%, rgba(0,140,200,0.10), transparent 70%);
+}
+
+/* RADAR SWEEP — slow scan across the backdrop */
+.sweep {
+  position:fixed; left:0; right:0; top:0; height:160px;
+  z-index:6; pointer-events:none;
+  background:linear-gradient(180deg, transparent, rgba(0,212,255,0.05) 50%, transparent);
+  animation:sweepmove 8s linear infinite;
+}
+@keyframes sweepmove { 0%{transform:translateY(-160px)} 100%{transform:translateY(100vh)} }

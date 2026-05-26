@@ -19,8 +19,11 @@
    NOTE: the /api/* proxies only work when deployed to Vercel
    (or `vercel dev`). Opening index.html as a file:// will only
    light up the direct feeds (weather, sports, news, 10Y, Spotify).
+
+   Namespaced module: exposes J.live.start(); main.js calls it. Orb pulses go
+   through J.orb instead of a window global.
 ============================================================ */
-(function () {
+(function (J) {
   'use strict';
 
   /* ---------- tiny DOM helpers ---------- */
@@ -31,10 +34,7 @@
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   function pulse(state, ms) {
-    if (typeof window.pulseOrb === 'function') { window.pulseOrb(state, ms); return; }
-    window.orbState = state;
-    clearTimeout(pulse._t);
-    pulse._t = setTimeout(() => { window.orbState = 'idle'; }, ms);
+    if (J.orb && J.orb.pulse) J.orb.pulse(state, ms);
   }
 
   function chgHtml(pct) {
@@ -505,9 +505,5 @@
     setInterval(updateEmail, 300000);       // 5 min
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start);
-  } else {
-    start();
-  }
-})();
+  J.live = { start };
+})(window.JARVIS = window.JARVIS || {});

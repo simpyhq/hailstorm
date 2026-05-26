@@ -1,0 +1,19 @@
+/* orb.css — arc-reactor glow + canvas wrapper. */
+#orb-bg {
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:900px; height:900px; border-radius:50%;
+  background:radial-gradient(circle, rgba(40,200,255,0.14) 0%, rgba(0,120,180,0.06) 44%, transparent 72%);
+  opacity:var(--glow, 0.85);
+  animation:orbglow 4.8s ease-in-out infinite;
+  pointer-events:none; z-index:2;
+}
+@keyframes orbglow {
+  0%,100%{ transform:translate(-50%,-50%) scale(1); }
+  50%{ transform:translate(-50%,-50%) scale(1.08); }
+}
+
+#orb-wrap {
+  position:fixed; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none; z-index:10;
+}

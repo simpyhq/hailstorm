@@ -1,0 +1,101 @@
+/* chrome.css — persistent UI frame: top bar, sidebar, ticker, brief button. */
+
+/* ==================== TOP BAR ==================== */
+#top-bar {
+  position:fixed; top:0; left:0; right:0; height:36px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px 0 52px;
+  border-bottom:1px solid rgba(0,212,255,0.12);
+  background:rgba(10,14,26,0.94); backdrop-filter:blur(12px);
+  z-index:200;
+}
+
+.tb-brand {
+  font-family:'Orbitron',sans-serif; font-size:12px; font-weight:700;
+  letter-spacing:5px; color:var(--cyan);
+  text-shadow:0 0 18px rgba(0,212,255,0.45);
+}
+
+.tb-mid {
+  position:absolute; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:14px;
+}
+.tb-dots { display:flex; gap:5px; }
+.tb-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:var(--green); box-shadow:0 0 5px var(--green);
+  animation:dotpulse 2.2s ease-in-out infinite;
+}
+.tb-dot:nth-child(2){ animation-delay:0.7s; }
+.tb-dot:nth-child(3){ animation-delay:1.4s; }
+@keyframes dotpulse { 0%,100%{opacity:1}50%{opacity:0.12} }
+
+#tb-clock { font-size:10px; letter-spacing:2px; opacity:0.68; }
+
+.tb-right { display:flex; align-items:center; gap:14px; font-size:9px; letter-spacing:2px; opacity:0.58; }
+
+#nm-btn {
+  padding:2px 8px; border:1px solid rgba(0,212,255,0.22);
+  background:transparent; color:rgba(0,212,255,0.45);
+  font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px;
+  cursor:pointer; transition:all 0.2s;
+}
+#nm-btn:hover { color:var(--cyan); border-color:var(--cyan); background:rgba(0,212,255,0.05); }
+
+/* ==================== SIDEBAR ==================== */
+#sidebar {
+  position:fixed; top:36px; left:0; bottom:28px; width:36px;
+  display:flex; flex-direction:column; align-items:center;
+  padding-top:18px; gap:2px;
+  border-right:1px solid rgba(0,212,255,0.08);
+  background:rgba(10,14,26,0.88);
+  z-index:200;
+}
+
+.sb-btn {
+  width:30px; height:30px;
+  display:flex; align-items:center; justify-content:center;
+  background:transparent; border:none;
+  color:rgba(0,212,255,0.3); cursor:pointer;
+  transition:color 0.2s, background 0.2s; padding:6px;
+}
+.sb-btn:hover { color:var(--cyan); background:rgba(0,212,255,0.06); }
+.sb-btn.active{ color:var(--cyan); background:rgba(0,212,255,0.1); }
+.sb-btn svg { width:14px; height:14px; }
+
+/* ==================== TICKER ==================== */
+#ticker {
+  position:fixed; bottom:0; left:0; right:0; height:28px;
+  border-top:1px solid rgba(0,212,255,0.08);
+  background:rgba(10,14,26,0.94);
+  overflow:hidden; display:flex; align-items:center; z-index:200;
+}
+.tlbl {
+  padding:0 10px; flex-shrink:0; height:100%;
+  display:flex; align-items:center;
+  font-family:'Orbitron',sans-serif; font-size:7.5px; font-weight:700;
+  letter-spacing:2px; color:var(--gold);
+  background:rgba(255,215,0,0.05);
+  border-right:1px solid rgba(0,212,255,0.07);
+}
+.tscroll { flex:1; overflow:hidden; }
+.ti {
+  white-space:nowrap; font-size:8.5px; letter-spacing:1.5px;
+  opacity:0.55; display:inline-block;
+  animation:marquee 75s linear infinite;
+}
+@keyframes marquee {
+  from { transform:translateX(100vw); }
+  to   { transform:translateX(-100%); }
+}
+
+/* ==================== BRIEF BTN ==================== */
+#brief-btn {
+  position:fixed; bottom:36px; right:16px;
+  background:transparent; border:1px solid rgba(0,212,255,0.18);
+  color:rgba(0,212,255,0.38);
+  font-family:'Orbitron',sans-serif; font-size:7.5px;
+  letter-spacing:2px; padding:4px 10px;
+  cursor:pointer; z-index:100; transition:all 0.2s;
+}
+#brief-btn:hover { color:var(--cyan); border-color:rgba(0,212,255,0.5); background:rgba(0,212,255,0.04); }
