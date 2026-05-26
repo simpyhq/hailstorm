@@ -9,6 +9,7 @@
 
 :root {
   --bg: #0a0e1a;
+  --glow: 0.85;
   --cyan: #00d4ff;
   --gold: #ffd700;
   --green: #81ff9b;
@@ -21,7 +22,8 @@
 html, body {
   width:100%; height:100vh;
   overflow:hidden;
-  background:var(--bg);
+  background:
+    radial-gradient(120% 95% at 50% 36%, #13243f 0%, #0b1525 40%, #070b14 80%);
   color:var(--cyan);
   font-family:'Share Tech Mono', monospace;
   cursor:crosshair;
@@ -31,7 +33,8 @@ html, body {
 /* HEX GRID */
 .hex-grid {
   position:fixed; inset:0; pointer-events:none; z-index:0;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='104'%3E%3Cpolygon points='30,2 58,18 58,50 30,66 2,50 2,18' fill='none' stroke='%2300d4ff' stroke-width='0.5' opacity='0.04'/%3E%3Cpolygon points='30,54 58,70 58,102 30,118 2,102 2,70' fill='none' stroke='%2300d4ff' stroke-width='0.5' opacity='0.04'/%3E%3C/svg%3E");
+  animation:hexdrift 72s linear infinite;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='104'%3E%3Cpolygon points='30,2 58,18 58,50 30,66 2,50 2,18' fill='none' stroke='%2300d4ff' stroke-width='0.5' opacity='0.07'/%3E%3Cpolygon points='30,54 58,70 58,102 30,118 2,102 2,70' fill='none' stroke='%2300d4ff' stroke-width='0.5' opacity='0.07'/%3E%3C/svg%3E");
 }
 
 .scanlines {
@@ -41,8 +44,27 @@ html, body {
 
 .vignette {
   position:fixed; inset:0; pointer-events:none; z-index:997;
-  background:radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.72) 100%);
+  background:radial-gradient(ellipse at center, transparent 50%, rgba(2,6,14,0.44) 100%);
 }
+
+/* ATMOSPHERE — orb light pool + horizon glow */
+.atmosphere {
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  opacity:var(--glow, 1);
+  background:
+    radial-gradient(46% 42% at 50% 50%, rgba(40,190,255,0.10), transparent 72%),
+    radial-gradient(120% 60% at 50% 116%, rgba(0,140,200,0.10), transparent 70%);
+}
+
+/* RADAR SWEEP — slow scan across the backdrop */
+.sweep {
+  position:fixed; left:0; right:0; top:0; height:160px;
+  z-index:6; pointer-events:none;
+  background:linear-gradient(180deg, transparent, rgba(0,212,255,0.05) 50%, transparent);
+  animation:sweepmove 8s linear infinite;
+}
+@keyframes sweepmove { 0%{transform:translateY(-160px)} 100%{transform:translateY(100vh)} }
+@keyframes hexdrift  { from{background-position:0 0} to{background-position:0 104px} }
 
 /* ==================== BOOT ==================== */
 #boot {
@@ -136,7 +158,7 @@ html, body {
 
 #tb-clock { font-size:10px; letter-spacing:2px; opacity:0.68; }
 
-.tb-right { display:flex; align-items:center; gap:14px; font-size:9px; letter-spacing:2px; opacity:0.4; }
+.tb-right { display:flex; align-items:center; gap:14px; font-size:9px; letter-spacing:2px; opacity:0.58; }
 
 #nm-btn {
   padding:2px 8px; border:1px solid rgba(0,212,255,0.22);
@@ -170,14 +192,15 @@ html, body {
 /* ==================== ORB ==================== */
 #orb-bg {
   position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:720px; height:720px; border-radius:50%;
-  background:radial-gradient(circle, rgba(0,212,255,0.05) 0%, rgba(0,38,62,0.03) 50%, transparent 70%);
+  width:900px; height:900px; border-radius:50%;
+  background:radial-gradient(circle, rgba(40,200,255,0.14) 0%, rgba(0,120,180,0.06) 44%, transparent 72%);
+  opacity:var(--glow, 0.85);
   animation:orbglow 4.8s ease-in-out infinite;
   pointer-events:none; z-index:2;
 }
 @keyframes orbglow {
-  0%,100%{ transform:translate(-50%,-50%) scale(1); opacity:0.65; }
-  50%{ transform:translate(-50%,-50%) scale(1.1); opacity:1; }
+  0%,100%{ transform:translate(-50%,-50%) scale(1); }
+  50%{ transform:translate(-50%,-50%) scale(1.08); }
 }
 
 #orb-wrap {
@@ -208,17 +231,17 @@ html, body {
 
 .cc-lbl {
   font-family:'Orbitron',sans-serif; font-size:7px; font-weight:700;
-  letter-spacing:3px; opacity:0.32; margin-bottom:8px;
+  letter-spacing:3px; opacity:0.55; margin-bottom:8px;
   color:var(--cyan); text-transform:uppercase;
 }
 .cc-big {
-  font-size:32px; line-height:1.0; color:var(--cyan);
-  text-shadow:0 0 22px rgba(0,212,255,0.32); margin-bottom:3px;
+  font-size:32px; line-height:1.0; color:#bdf3ff;
+  text-shadow:0 0 18px rgba(0,212,255,0.7), 0 0 42px rgba(0,212,255,0.35); margin-bottom:3px;
 }
 .cc-med { font-size:11px; opacity:0.65; margin-bottom:4px; letter-spacing:1px; }
 .cc-row {
   display:flex; gap:12px;
-  font-size:8.5px; letter-spacing:1px; opacity:0.48; padding:1.5px 0;
+  font-size:8.5px; letter-spacing:1px; opacity:0.62; padding:1.5px 0;
 }
 .cc.tr .cc-row, .cc.br .cc-row { justify-content:flex-end; flex-direction:row-reverse; }
 .cc-v { color:var(--cyan); opacity:1; }
@@ -260,7 +283,7 @@ html, body {
 .gp-tab {
   padding:9px 12px;
   font-family:'Orbitron',sans-serif; font-size:8px; font-weight:700;
-  letter-spacing:3px; color:rgba(0,212,255,0.28);
+  letter-spacing:3px; color:rgba(0,212,255,0.46);
   background:transparent; border:none;
   border-bottom:2px solid transparent; margin-bottom:-1px;
   cursor:pointer; transition:all 0.2s;
@@ -281,7 +304,7 @@ html, body {
 .gp-sec { margin-bottom:20px; }
 .gp-sec-lbl {
   font-family:'Orbitron',sans-serif; font-size:7.5px; font-weight:700;
-  letter-spacing:2.5px; opacity:0.28; margin-bottom:10px;
+  letter-spacing:2.5px; opacity:0.5; margin-bottom:10px;
   color:var(--cyan); display:flex; align-items:center; gap:8px;
 }
 .gp-sec-lbl::after { content:''; flex:1; height:1px; background:rgba(0,212,255,0.07); }
@@ -308,7 +331,7 @@ html, body {
 /* feed */
 .fi { padding:5px 0; border-bottom:1px solid rgba(0,212,255,0.05); font-size:9px; letter-spacing:0.8px; line-height:1.6; }
 .fi:last-child { border-bottom:none; }
-.ft { opacity:0.28; font-size:7.5px; letter-spacing:2px; margin-bottom:1px; }
+.ft { opacity:0.46; font-size:7.5px; letter-spacing:2px; margin-bottom:1px; }
 
 /* ==================== MORNING BRIEF CARDS ==================== */
 .bc {
@@ -332,11 +355,11 @@ html, body {
 .bc-x:hover { color:var(--cyan); }
 .bc-lbl {
   font-family:'Orbitron',sans-serif; font-size:7px; font-weight:700;
-  letter-spacing:3px; opacity:0.32; margin-bottom:8px; color:var(--cyan);
+  letter-spacing:3px; opacity:0.55; margin-bottom:8px; color:var(--cyan);
 }
 .bc-big {
-  font-size:28px; line-height:1; color:var(--cyan);
-  text-shadow:0 0 16px rgba(0,212,255,0.35); margin-bottom:4px;
+  font-size:28px; line-height:1; color:#bdf3ff;
+  text-shadow:0 0 16px rgba(0,212,255,0.6), 0 0 38px rgba(0,212,255,0.3); margin-bottom:4px;
 }
 .bc-sub { font-size:8.5px; opacity:0.48; letter-spacing:0.8px; line-height:1.7; white-space:pre-line; }
 
@@ -358,7 +381,7 @@ html, body {
 .tscroll { flex:1; overflow:hidden; }
 .ti {
   white-space:nowrap; font-size:8.5px; letter-spacing:1.5px;
-  opacity:0.4; display:inline-block;
+  opacity:0.55; display:inline-block;
   animation:marquee 75s linear infinite;
 }
 @keyframes marquee {
@@ -380,9 +403,11 @@ html, body {
 </head>
 <body>
 
+<div class="atmosphere"></div>
 <div class="hex-grid"></div>
 <div class="scanlines"></div>
 <div class="vignette"></div>
+<div class="sweep"></div>
 
 <!-- BOOT -->
 <div id="boot">
@@ -688,11 +713,12 @@ function getBreathe() {
 function drawOrb() {
   ctx.clearRect(0, 0, SZ, SZ);
   const br = getBreathe();
+  document.documentElement.style.setProperty('--glow', br.toFixed(3));
 
   ctx.globalCompositeOperation = 'source-over';
-  const bg = ctx.createRadialGradient(CX,CY,0, CX,CY,265);
-  bg.addColorStop(0,    `rgba(0,212,255,${0.062*br})`);
-  bg.addColorStop(0.38, `rgba(0,88,138,${0.024*br})`);
+  const bg = ctx.createRadialGradient(CX,CY,0, CX,CY,300);
+  bg.addColorStop(0,    `rgba(60,210,255,${0.10*br})`);
+  bg.addColorStop(0.38, `rgba(0,120,180,${0.04*br})`);
   bg.addColorStop(1,    'rgba(0,0,0,0)');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, SZ, SZ);
@@ -812,7 +838,15 @@ function fmtChg() {
   return `<span style="color:${up?'var(--green)':'var(--red)'}">${up?'▲':'▼'} ${Math.abs(pct).toFixed(2)}%</span>`;
 }
 
+let _pulseTO;
+function pulseOrb(state, ms) {
+  window.orbState = state;
+  clearTimeout(_pulseTO);
+  _pulseTO = setTimeout(() => { window.orbState = 'idle'; }, ms);
+}
+
 function mktUpdate() {
+  pulseOrb('processing', 1100);   // orb + ambient light react on each data refresh
   ['spy','qqq','btc'].forEach(s => { const h=fmtChg(); html('m-'+s,h); html('gp-'+s,h); });
   ['nvda','tsla','aapl','amd','amzn','meta','msft'].forEach(s => html('gp-'+s,fmtChg()));
 }
