@@ -478,7 +478,7 @@ html, body {
     <div class="cc-row"><span>SPY</span><span id="m-spy" class="cc-v">--</span></div>
     <div class="cc-row"><span>QQQ</span><span id="m-qqq" class="cc-v">--</span></div>
     <div class="cc-row"><span>BTC</span><span id="m-btc" class="cc-v">--</span></div>
-    <div class="cc-row"><span>10Y</span><span class="cc-v">4.32%</span></div>
+    <div class="cc-row"><span>10Y</span><span id="m-10y" class="cc-v">--</span></div>
   </div>
 
   <div class="cc bl">
@@ -493,8 +493,8 @@ html, body {
   <div class="cc br">
     <div class="cc-lbl">Comms</div>
     <div style="font-size:9px; line-height:1.65; margin-bottom:6px;">
-      <div style="opacity:0.75;">Anthropic Recruiting</div>
-      <div style="opacity:0.38; font-size:7.5px;">Re: Summer 2027</div>
+      <div id="cc-mailfrom" style="opacity:0.75;">—</div>
+      <div id="cc-mailsub" style="opacity:0.38; font-size:7.5px;">—</div>
     </div>
     <div style="height:1px; background:rgba(0,212,255,0.06); margin-bottom:6px;"></div>
     <div style="font-size:7.5px; opacity:0.35; letter-spacing:0.7px; line-height:1.7;" id="cc-quote">—</div>
@@ -526,10 +526,7 @@ html, body {
         </div>
         <div class="gp-sec">
           <div class="gp-sec-lbl">Canvas // OU</div>
-          <div class="fi"><div class="ft">UPCOMING</div><div>FIN 3453 — Midterm Review</div></div>
-          <div class="fi"><div class="ft">DUE SOON</div><div>MIS 3423 — Database Project</div></div>
-          <div class="fi"><div class="ft">POSTED</div><div>Investment Club — Deal Memo Notes</div></div>
-          <div class="fi"><div class="ft">GRADED</div><div style="color:var(--green)">ECON 3113 — A</div></div>
+          <div id="gp-canvas"><div class="fi"><div style="opacity:.4">Loading…</div></div></div>
         </div>
         <div class="gp-sec">
           <div class="gp-sec-lbl">System — ClarixHost</div>
@@ -558,11 +555,15 @@ html, body {
         </div>
         <div class="gp-sec">
           <div class="gp-sec-lbl">Macro</div>
-          <div class="mr"><span class="ms">10Y</span><span style="color:var(--cyan)">4.32%</span></div>
+          <div class="mr"><span class="ms">10Y</span><span id="gp-10y" style="color:var(--cyan)">--</span></div>
           <div class="mr"><span class="ms">BTC</span><span id="gp-btc">--</span></div>
-          <div class="mr"><span class="ms">DXY</span><span style="color:var(--cyan)">103.8</span></div>
-          <div class="mr"><span class="ms">VIX</span><span style="color:var(--gold)">18.4</span></div>
-          <div class="mr"><span class="ms">FED</span><span style="color:var(--cyan)">5.25–5.50%</span></div>
+          <div class="mr"><span class="ms">DXY</span><span id="gp-dxy" style="color:var(--cyan)">--</span></div>
+          <div class="mr"><span class="ms">VIX</span><span id="gp-vix" style="color:var(--gold)">--</span></div>
+          <div class="mr"><span class="ms">FED</span><span style="color:var(--cyan)">5.33%</span></div>
+        </div>
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">Prediction Markets</div>
+          <div id="gp-poly"><div class="fi"><div style="opacity:.4">Loading…</div></div></div>
         </div>
         <div class="gp-sec">
           <div class="gp-sec-lbl">Options // Bruce</div>
@@ -575,19 +576,35 @@ html, body {
         </div>
         <div class="gp-sec">
           <div class="gp-sec-lbl">Dallas Sports</div>
-          <div class="fi"><div class="ft">RANGERS</div><div>-- vs. -- · --</div></div>
-          <div class="fi"><div class="ft">MAVERICKS</div><div class="up">W 114–98 · Final</div></div>
-          <div class="fi"><div class="ft">COWBOYS</div><div style="opacity:0.28;">OFF SEASON</div></div>
+          <div class="fi"><div class="ft">RANGERS</div><div id="sp-rangers">--</div></div>
+          <div class="fi"><div class="ft">MAVERICKS</div><div id="sp-mavs">--</div></div>
+          <div class="fi"><div class="ft">COWBOYS</div><div id="sp-cowboys">--</div></div>
         </div>
       </div>
 
       <!-- LIFE -->
       <div class="tab-pane" id="pane-life">
         <div class="gp-sec">
+          <div class="gp-sec-lbl">Now Playing</div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="position:relative; width:42px; height:42px; flex-shrink:0; background:rgba(0,212,255,0.06); border:1px solid rgba(0,212,255,0.1);">
+              <img id="spotify-art" alt="" style="width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .4s;">
+            </div>
+            <div style="min-width:0; flex:1;">
+              <div id="spotify-track" style="font-size:10px; opacity:0.85; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer;">Click to connect</div>
+              <div id="spotify-artist" style="font-size:8px; opacity:0.45; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Spotify</div>
+              <div style="height:2px; background:rgba(0,212,255,0.08); margin-top:5px;"><div id="spotify-progress" style="height:100%; width:0%; background:var(--cyan); transition:width .5s;"></div></div>
+            </div>
+          </div>
+          <div style="display:flex; gap:16px; justify-content:center; margin-top:8px; font-size:12px; opacity:0.6;">
+            <span id="spotify-prev" style="cursor:pointer;">⏮</span>
+            <span id="spotify-play" style="cursor:pointer;">▶</span>
+            <span id="spotify-next" style="cursor:pointer;">⏭</span>
+          </div>
+        </div>
+        <div class="gp-sec">
           <div class="gp-sec-lbl">Email</div>
-          <div class="fi"><div class="ft">UNREAD · 2H AGO</div><div style="opacity:0.82;">Anthropic Recruiting</div><div style="opacity:0.38; font-size:7.5px;">Re: Summer 2027 Applications</div></div>
-          <div class="fi"><div class="ft">UNREAD · 5H AGO</div><div style="opacity:0.82;">Delta Tau Delta</div><div style="opacity:0.38; font-size:7.5px;">Chapter Meeting — Thursday 7PM</div></div>
-          <div class="fi"><div class="ft">READ</div><div style="opacity:0.52;">Price College Advising</div><div style="opacity:0.28; font-size:7.5px;">MIS Minor Credit Approval</div></div>
+          <div id="gp-email"><div class="fi"><div style="opacity:.4">Connect portal…</div></div></div>
         </div>
         <div class="gp-sec">
           <div class="gp-sec-lbl">IB Pipeline — Summer 2027</div>
@@ -844,6 +861,7 @@ function pulseOrb(state, ms) {
   clearTimeout(_pulseTO);
   _pulseTO = setTimeout(() => { window.orbState = 'idle'; }, ms);
 }
+window.pulseOrb = pulseOrb;   // exposed so js/live.js can pulse the orb on data refresh
 
 function mktUpdate() {
   pulseOrb('processing', 1100);   // orb + ambient light react on each data refresh
@@ -1001,8 +1019,8 @@ const CHECKS = [
       orbLoop();
       setInterval(tick, 1000); tick();
       sysUpdate(); setInterval(sysUpdate, 2600);
-      mktUpdate(); setInterval(mktUpdate, 7000);
-      wxLoad(); loadQuote();
+      loadQuote();
+      // weather, markets, ticker, sports, news, etc. are now driven by js/live.js
       setTimeout(() => {
         bootEl.style.display='none';
         showBrief();
@@ -1013,5 +1031,6 @@ const CHECKS = [
 
 })();
 </script>
+<script src="js/live.js"></script>
 </body>
 </html>

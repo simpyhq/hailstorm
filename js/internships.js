@@ -1,8 +1,7 @@
 import { bindDeepLink } from "./deeplinks.js";
 
-const LOGIN_URL = "https://simpyhq.com/api/auth/login";
-const LISTINGS_URL = "https://simpyhq.com/api/jobs/listings";
-const LOGIN_PASSWORD = "Chrissim2006!";
+// Auth happens server-side in /api/simplyhq (password lives in SIMPLYHQ_PASSWORD).
+const LISTINGS_URL = "/api/simplyhq?resource=jobs";
 const REFRESH_INTERVAL_MS = 60 * 60 * 1000;
 
 function setValue(id, value) {
@@ -53,22 +52,7 @@ function countStatuses(listings) {
 }
 
 async function fetchListings() {
-  const loginResponse = await fetch(LOGIN_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ password: LOGIN_PASSWORD }),
-  });
-
-  if (!loginResponse.ok) {
-    throw new Error(`Internship login failed: ${loginResponse.status}`);
-  }
-
-  const listingsResponse = await fetch(LISTINGS_URL, {
-    credentials: "include",
-  });
+  const listingsResponse = await fetch(LISTINGS_URL);
 
   if (!listingsResponse.ok) {
     throw new Error(`Internship listings failed: ${listingsResponse.status}`);

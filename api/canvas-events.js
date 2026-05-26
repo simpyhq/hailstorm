@@ -1,8 +1,13 @@
-const CANVAS_TOKEN = '8808~rB2MKzrrZcJUNHFkhAcCRBAmWYRLBGFZNChERaQDwLWzeYcVMDR42kYmantZ3PNw';
+// Token lives in Vercel env vars now — set CANVAS_TOKEN (and rotate the old one
+// that was previously hardcoded here).
+const CANVAS_TOKEN = process.env.CANVAS_TOKEN;
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
+  if (!CANVAS_TOKEN) {
+    return res.status(500).json({ error: 'CANVAS_TOKEN not configured' });
+  }
   try {
     const response = await fetch(
       'https://canvas.ou.edu/api/v1/users/self/upcoming_events?per_page=10',

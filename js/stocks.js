@@ -3,11 +3,10 @@ const STOCK_TICKER_INNER_ID = "stock-ticker-inner";
 const YAHOO_FALLBACK_MS = 60_000;
 const STOCK_PRICE_EPSILON = 0.01;
 const ALPACA_WEBSOCKET_URL = "wss://stream.data.alpaca.markets/v2/iex";
-const ALPACA_AUTH_MESSAGE = {
-  action: "auth",
-  key: "PKHG7EJZSCQKDTS3E7IVOVL5YY",
-  secret: "6CCM6WQysH5S1nJEyMmSmUUtbH6DMw7SRGbuMTRvu8Y4",
-};
+// Alpaca live streaming is DISABLED — API credentials must never ship to the
+// browser. The ticker polls the keyless Yahoo proxy (/api/yahoo) instead.
+// Rotate the old Alpaca key/secret that were previously hardcoded here.
+const ALPACA_AUTH_MESSAGE = { action: "auth", key: "", secret: "" };
 const STOCK_SYMBOLS = [
   "SPY",
   "QQQ",
@@ -438,11 +437,6 @@ export function initStocks() {
     tickerInner.addEventListener("mouseleave", () => { tickerInner.style.animationPlayState = "running"; });
   }
 
-  if (isMarketHours()) {
-    connectStockStream();
-    startYahooFallbackPolling();
-    return;
-  }
-
+  // Always poll the keyless Yahoo proxy — no Alpaca credentials in the browser.
   startYahooAllSymbolsPolling();
 }

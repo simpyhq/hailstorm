@@ -4,9 +4,8 @@
  * Uses the same auth pattern as internships.js.
  */
 
-const LOGIN_URL = "https://simpyhq.com/api/auth/login";
-const EMAIL_URL = "https://simpyhq.com/api/emails/recent";
-const LOGIN_PASSWORD = "Chrissim2006!";
+// Auth happens server-side in /api/simplyhq (password lives in SIMPLYHQ_PASSWORD).
+const EMAIL_URL = "/api/simplyhq?resource=emails";
 const REFRESH_MS = 5 * 60 * 1000; // 5 min
 
 function getListEl() {
@@ -46,16 +45,7 @@ function renderEmails(emails) {
 }
 
 async function fetchEmails() {
-  // Login first
-  const loginRes = await fetch(LOGIN_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ password: LOGIN_PASSWORD }),
-  });
-  if (!loginRes.ok) throw new Error("Email login failed");
-
-  const emailRes = await fetch(EMAIL_URL, { credentials: "include" });
+  const emailRes = await fetch(EMAIL_URL);
   if (!emailRes.ok) throw new Error("Email fetch failed");
 
   const data = await emailRes.json();
