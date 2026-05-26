@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.A.R.V.I.S. // HAILSTORM</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --bg: #0a0e1a;
+  --cyan: #00d4ff;
+  --gold: #ffd700;
+  --green: #81ff9b;
+  --red: #ff4455;
+  --amber: #ffa500;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width:100%; height:100vh;
+  overflow:hidden;
+  background:var(--bg);
+  color:var(--cyan);
+  font-family:'Share Tech Mono', monospace;
+  cursor:crosshair;
+  user-select:none;
+}
+
+/* HEX GRID */
+.hex-grid {
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='104'%3E%3Cpolygon points='30,2 58,18 58,50 30,66 2,50 2,18' fill='none' stroke='%2300d4ff' stroke-width='0.5' opacity='0.04'/%3E%3Cpolygon points='30,54 58,70 58,102 30,118 2,102 2,70' fill='none' stroke='%2300d4ff' stroke-width='0.5' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+.scanlines {
+  position:fixed; inset:0; pointer-events:none; z-index:998;
+  background:repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
+}
+
+.vignette {
+  position:fixed; inset:0; pointer-events:none; z-index:997;
+  background:radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.72) 100%);
+}
+
+/* ==================== BOOT ==================== */
+#boot {
+  position:fixed; inset:0; background:#000;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:16px;
+  z-index:9999;
+}
+
+#boot-title {
+  font-family:'Orbitron',sans-serif; font-size:20px; font-weight:700;
+  letter-spacing:8px; color:var(--cyan);
+  text-shadow:0 0 30px var(--cyan); opacity:0;
+}
+
+#boot-progress {
+  width:300px; height:3px;
+  background:rgba(0,212,255,0.08);
+  position:relative; overflow:hidden; opacity:0;
+}
+#boot-progress::after {
+  content:''; position:absolute; inset:0; z-index:2;
+  background:repeating-linear-gradient(90deg, transparent, transparent 17px, rgba(10,14,26,0.7) 17px, rgba(10,14,26,0.7) 20px);
+}
+#boot-fill {
+  height:100%; width:0%;
+  background:var(--cyan);
+  box-shadow:0 0 12px var(--cyan), 0 0 22px rgba(0,212,255,0.35);
+  transition:width 0.07s linear;
+}
+
+#boot-list {
+  width:300px; font-size:9px; letter-spacing:1.5px;
+  opacity:0; min-height:140px;
+}
+.boot-check {
+  padding:2.5px 0; opacity:0;
+  transform:translateX(-10px);
+  transition:opacity 0.28s ease, transform 0.28s ease;
+  color:rgba(0,212,255,0.6);
+}
+.boot-check.show { opacity:1; transform:translateX(0); }
+.bok  { color:var(--green); }
+.bwarn{ color:var(--gold); }
+
+#boot-welcome {
+  font-family:'Orbitron',sans-serif; font-size:16px; font-weight:700;
+  letter-spacing:8px; color:var(--gold);
+  text-shadow:0 0 28px var(--gold); opacity:0;
+  transition:opacity 0.9s ease;
+}
+
+#boot-flash {
+  position:fixed; inset:0; background:#fff;
+  opacity:0; pointer-events:none; z-index:10000;
+  transition:opacity 0.18s ease;
+}
+
+/* ==================== APP ==================== */
+#app { position:fixed; inset:0; opacity:0; transition:opacity 0.8s ease; z-index:1; }
+
+/* ==================== TOP BAR ==================== */
+#top-bar {
+  position:fixed; top:0; left:0; right:0; height:36px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px 0 52px;
+  border-bottom:1px solid rgba(0,212,255,0.12);
+  background:rgba(10,14,26,0.94); backdrop-filter:blur(12px);
+  z-index:200;
+}
+
+.tb-brand {
+  font-family:'Orbitron',sans-serif; font-size:12px; font-weight:700;
+  letter-spacing:5px; color:var(--cyan);
+  text-shadow:0 0 18px rgba(0,212,255,0.45);
+}
+
+.tb-mid {
+  position:absolute; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:14px;
+}
+.tb-dots { display:flex; gap:5px; }
+.tb-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:var(--green); box-shadow:0 0 5px var(--green);
+  animation:dotpulse 2.2s ease-in-out infinite;
+}
+.tb-dot:nth-child(2){ animation-delay:0.7s; }
+.tb-dot:nth-child(3){ animation-delay:1.4s; }
+@keyframes dotpulse { 0%,100%{opacity:1}50%{opacity:0.12} }
+
+#tb-clock { font-size:10px; letter-spacing:2px; opacity:0.68; }
+
+.tb-right { display:flex; align-items:center; gap:14px; font-size:9px; letter-spacing:2px; opacity:0.4; }
+
+#nm-btn {
+  padding:2px 8px; border:1px solid rgba(0,212,255,0.22);
+  background:transparent; color:rgba(0,212,255,0.45);
+  font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px;
+  cursor:pointer; transition:all 0.2s;
+}
+#nm-btn:hover { color:var(--cyan); border-color:var(--cyan); background:rgba(0,212,255,0.05); }
+
+/* ==================== SIDEBAR ==================== */
+#sidebar {
+  position:fixed; top:36px; left:0; bottom:28px; width:36px;
+  display:flex; flex-direction:column; align-items:center;
+  padding-top:18px; gap:2px;
+  border-right:1px solid rgba(0,212,255,0.08);
+  background:rgba(10,14,26,0.88);
+  z-index:200;
+}
+
+.sb-btn {
+  width:30px; height:30px;
+  display:flex; align-items:center; justify-content:center;
+  background:transparent; border:none;
+  color:rgba(0,212,255,0.3); cursor:pointer;
+  transition:color 0.2s, background 0.2s; padding:6px;
+}
+.sb-btn:hover { color:var(--cyan); background:rgba(0,212,255,0.06); }
+.sb-btn.active{ color:var(--cyan); background:rgba(0,212,255,0.1); }
+.sb-btn svg { width:14px; height:14px; }
+
+/* ==================== ORB ==================== */
+#orb-bg {
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:720px; height:720px; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,212,255,0.05) 0%, rgba(0,38,62,0.03) 50%, transparent 70%);
+  animation:orbglow 4.8s ease-in-out infinite;
+  pointer-events:none; z-index:2;
+}
+@keyframes orbglow {
+  0%,100%{ transform:translate(-50%,-50%) scale(1); opacity:0.65; }
+  50%{ transform:translate(-50%,-50%) scale(1.1); opacity:1; }
+}
+
+#orb-wrap {
+  position:fixed; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none; z-index:10;
+}
+
+/* ==================== CORNER CLUSTERS ==================== */
+.cc { position:fixed; z-index:20; padding:14px 12px 12px; min-width:155px; }
+.cc::before, .cc::after { content:''; position:absolute; width:10px; height:10px; }
+
+.cc.tl { top:44px; left:48px; }
+.cc.tl::before{ top:0;left:0; border-top:1px solid rgba(0,212,255,0.6); border-left:1px solid rgba(0,212,255,0.6); }
+.cc.tl::after { bottom:0;right:0; border-bottom:1px solid rgba(0,212,255,0.12); border-right:1px solid rgba(0,212,255,0.12); }
+
+.cc.tr { top:44px; right:16px; text-align:right; }
+.cc.tr::before{ top:0;right:0; border-top:1px solid rgba(0,212,255,0.6); border-right:1px solid rgba(0,212,255,0.6); }
+.cc.tr::after { bottom:0;left:0; border-bottom:1px solid rgba(0,212,255,0.12); border-left:1px solid rgba(0,212,255,0.12); }
+
+.cc.bl { bottom:36px; left:48px; }
+.cc.bl::before{ bottom:0;left:0; border-bottom:1px solid rgba(0,212,255,0.6); border-left:1px solid rgba(0,212,255,0.6); }
+.cc.bl::after { top:0;right:0; border-top:1px solid rgba(0,212,255,0.12); border-right:1px solid rgba(0,212,255,0.12); }
+
+.cc.br { bottom:36px; right:16px; text-align:right; }
+.cc.br::before{ bottom:0;right:0; border-bottom:1px solid rgba(0,212,255,0.6); border-right:1px solid rgba(0,212,255,0.6); }
+.cc.br::after { top:0;left:0; border-top:1px solid rgba(0,212,255,0.12); border-left:1px solid rgba(0,212,255,0.12); }
+
+.cc-lbl {
+  font-family:'Orbitron',sans-serif; font-size:7px; font-weight:700;
+  letter-spacing:3px; opacity:0.32; margin-bottom:8px;
+  color:var(--cyan); text-transform:uppercase;
+}
+.cc-big {
+  font-size:32px; line-height:1.0; color:var(--cyan);
+  text-shadow:0 0 22px rgba(0,212,255,0.32); margin-bottom:3px;
+}
+.cc-med { font-size:11px; opacity:0.65; margin-bottom:4px; letter-spacing:1px; }
+.cc-row {
+  display:flex; gap:12px;
+  font-size:8.5px; letter-spacing:1px; opacity:0.48; padding:1.5px 0;
+}
+.cc.tr .cc-row, .cc.br .cc-row { justify-content:flex-end; flex-direction:row-reverse; }
+.cc-v { color:var(--cyan); opacity:1; }
+.up { color:var(--green) !important; opacity:1 !important; }
+.dn { color:var(--red) !important; opacity:1 !important; }
+
+/* ==================== GLASS PANEL ==================== */
+#glass-panel {
+  position:fixed; top:36px; left:36px; bottom:28px; width:348px;
+  background:rgba(0,14,26,0.9);
+  backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
+  z-index:150;
+  transform:translateX(-390px);
+  transition:transform 0.38s cubic-bezier(0.25,0.85,0.35,1.0);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+#glass-panel.open { transform:translateX(0); }
+
+#glass-panel::before {
+  content:''; position:absolute; top:0; left:0; width:14px; height:14px; z-index:1;
+  border-top:1px solid rgba(0,212,255,0.75); border-left:1px solid rgba(0,212,255,0.75);
+}
+#glass-panel::after {
+  content:''; position:absolute; bottom:0; right:0; width:14px; height:14px; z-index:1;
+  border-bottom:1px solid rgba(0,212,255,0.55); border-right:1px solid rgba(0,212,255,0.55);
+}
+.gp-ctr, .gp-cbl {
+  position:absolute; width:14px; height:14px; z-index:1; pointer-events:none;
+}
+.gp-ctr{ top:0; right:0; border-top:1px solid rgba(0,212,255,0.25); border-right:1px solid rgba(0,212,255,0.25); }
+.gp-cbl{ bottom:0; left:0; border-bottom:1px solid rgba(0,212,255,0.25); border-left:1px solid rgba(0,212,255,0.25); }
+
+.gp-topline { height:1px; background:linear-gradient(90deg, var(--cyan), rgba(0,212,255,0.08)); flex-shrink:0; }
+
+.gp-tabs {
+  display:flex; padding:0 14px;
+  border-bottom:1px solid rgba(0,212,255,0.07); flex-shrink:0;
+}
+.gp-tab {
+  padding:9px 12px;
+  font-family:'Orbitron',sans-serif; font-size:8px; font-weight:700;
+  letter-spacing:3px; color:rgba(0,212,255,0.28);
+  background:transparent; border:none;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  cursor:pointer; transition:all 0.2s;
+}
+.gp-tab.active { color:var(--cyan); border-bottom-color:var(--cyan); }
+.gp-tab:hover  { color:rgba(0,212,255,0.65); }
+
+.gp-scroll {
+  flex:1; overflow-y:auto; padding:14px;
+  scrollbar-width:thin; scrollbar-color:rgba(0,212,255,0.12) transparent;
+}
+.gp-scroll::-webkit-scrollbar{ width:2px; }
+.gp-scroll::-webkit-scrollbar-thumb{ background:rgba(0,212,255,0.12); }
+
+.tab-pane { display:none; }
+.tab-pane.active { display:block; }
+
+.gp-sec { margin-bottom:20px; }
+.gp-sec-lbl {
+  font-family:'Orbitron',sans-serif; font-size:7.5px; font-weight:700;
+  letter-spacing:2.5px; opacity:0.28; margin-bottom:10px;
+  color:var(--cyan); display:flex; align-items:center; gap:8px;
+}
+.gp-sec-lbl::after { content:''; flex:1; height:1px; background:rgba(0,212,255,0.07); }
+
+/* bar */
+.bw { margin-bottom:7px; }
+.bm { display:flex; justify-content:space-between; font-size:8.5px; letter-spacing:1px; opacity:0.5; margin-bottom:3px; }
+.bt { height:2px; background:rgba(0,212,255,0.06); position:relative; overflow:visible; }
+.bf { height:100%; background:var(--cyan); transition:width 1.8s ease; position:relative; }
+.bf::after { content:''; position:absolute; right:-1px; top:-2px; width:2px; height:6px; background:var(--cyan); box-shadow:0 0 4px var(--cyan); }
+.bf.g { background:var(--green); }
+.bf.g::after { background:var(--green); box-shadow:0 0 4px var(--green); }
+
+/* market row */
+.mr { display:flex; justify-content:space-between; align-items:center; padding:4.5px 0; border-bottom:1px solid rgba(0,212,255,0.04); font-size:9.5px; }
+.mr:last-child { border-bottom:none; }
+.ms { font-family:'Orbitron',sans-serif; font-size:8.5px; letter-spacing:2px; opacity:0.6; }
+
+/* pipeline */
+.pg { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.pc { padding:8px; border:1px solid rgba(0,212,255,0.07); font-size:7.5px; letter-spacing:1.5px; opacity:0.65; }
+.pv { font-family:'Orbitron',sans-serif; font-size:18px; font-weight:700; display:block; margin-top:2px; }
+
+/* feed */
+.fi { padding:5px 0; border-bottom:1px solid rgba(0,212,255,0.05); font-size:9px; letter-spacing:0.8px; line-height:1.6; }
+.fi:last-child { border-bottom:none; }
+.ft { opacity:0.28; font-size:7.5px; letter-spacing:2px; margin-bottom:1px; }
+
+/* ==================== MORNING BRIEF CARDS ==================== */
+.bc {
+  position:fixed; padding:18px 18px 14px;
+  background:rgba(0,14,26,0.92);
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  z-index:30; opacity:0;
+  transition:opacity 0.55s ease;
+}
+.bc::before{ content:''; position:absolute; top:0; left:0; width:11px; height:11px; border-top:1px solid rgba(0,212,255,0.72); border-left:1px solid rgba(0,212,255,0.72); }
+.bc::after { content:''; position:absolute; bottom:0; right:0; width:11px; height:11px; border-bottom:1px solid rgba(0,212,255,0.38); border-right:1px solid rgba(0,212,255,0.38); }
+.bc.show { opacity:1; }
+
+.bc-x {
+  position:absolute; top:8px; right:8px;
+  background:transparent; border:none;
+  color:rgba(0,212,255,0.32); font-family:'Share Tech Mono',monospace;
+  font-size:8px; letter-spacing:1px; cursor:pointer;
+  padding:2px 4px; transition:color 0.2s;
+}
+.bc-x:hover { color:var(--cyan); }
+.bc-lbl {
+  font-family:'Orbitron',sans-serif; font-size:7px; font-weight:700;
+  letter-spacing:3px; opacity:0.32; margin-bottom:8px; color:var(--cyan);
+}
+.bc-big {
+  font-size:28px; line-height:1; color:var(--cyan);
+  text-shadow:0 0 16px rgba(0,212,255,0.35); margin-bottom:4px;
+}
+.bc-sub { font-size:8.5px; opacity:0.48; letter-spacing:0.8px; line-height:1.7; white-space:pre-line; }
+
+/* ==================== TICKER ==================== */
+#ticker {
+  position:fixed; bottom:0; left:0; right:0; height:28px;
+  border-top:1px solid rgba(0,212,255,0.08);
+  background:rgba(10,14,26,0.94);
+  overflow:hidden; display:flex; align-items:center; z-index:200;
+}
+.tlbl {
+  padding:0 10px; flex-shrink:0; height:100%;
+  display:flex; align-items:center;
+  font-family:'Orbitron',sans-serif; font-size:7.5px; font-weight:700;
+  letter-spacing:2px; color:var(--gold);
+  background:rgba(255,215,0,0.05);
+  border-right:1px solid rgba(0,212,255,0.07);
+}
+.tscroll { flex:1; overflow:hidden; }
+.ti {
+  white-space:nowrap; font-size:8.5px; letter-spacing:1.5px;
+  opacity:0.4; display:inline-block;
+  animation:marquee 75s linear infinite;
+}
+@keyframes marquee {
+  from { transform:translateX(100vw); }
+  to   { transform:translateX(-100%); }
+}
+
+/* ==================== BRIEF BTN ==================== */
+#brief-btn {
+  position:fixed; bottom:36px; right:16px;
+  background:transparent; border:1px solid rgba(0,212,255,0.18);
+  color:rgba(0,212,255,0.38);
+  font-family:'Orbitron',sans-serif; font-size:7.5px;
+  letter-spacing:2px; padding:4px 10px;
+  cursor:pointer; z-index:100; transition:all 0.2s;
+}
+#brief-btn:hover { color:var(--cyan); border-color:rgba(0,212,255,0.5); background:rgba(0,212,255,0.04); }
+</style>
+</head>
+<body>
+
+<div class="hex-grid"></div>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<!-- BOOT -->
+<div id="boot">
+  <div id="boot-title">INITIALIZING J.A.R.V.I.S.</div>
+  <div id="boot-progress"><div id="boot-fill"></div></div>
+  <div id="boot-list"></div>
+  <div id="boot-welcome">WELCOME, CHRISTIAN</div>
+</div>
+<div id="boot-flash"></div>
+
+<!-- APP -->
+<div id="app">
+  <div id="orb-bg"></div>
+
+  <!-- TOP BAR -->
+  <div id="top-bar">
+    <div class="tb-brand">J.A.R.V.I.S. // v4.1</div>
+    <div class="tb-mid">
+      <div class="tb-dots">
+        <div class="tb-dot"></div>
+        <div class="tb-dot"></div>
+        <div class="tb-dot"></div>
+      </div>
+      <div id="tb-clock">00:00:00</div>
+    </div>
+    <div class="tb-right">
+      <span>SYS NOMINAL</span>
+      <button id="nm-btn">NM</button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <button class="sb-btn" data-tab="intel" title="Intel">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+        <rect x="1" y="1" width="6" height="6"/><rect x="9" y="1" width="6" height="6"/>
+        <rect x="1" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/>
+      </svg>
+    </button>
+    <button class="sb-btn" data-tab="markets" title="Markets">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+        <polyline points="1,12 4,7 7,9 11,3 15,3"/>
+        <line x1="15" y1="1" x2="15" y2="5"/><line x1="13" y1="3" x2="15" y2="3"/>
+      </svg>
+    </button>
+    <button class="sb-btn" data-tab="life" title="Life">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+        <circle cx="8" cy="5.5" r="3"/><path d="M2,15 C2,11 5,9.5 8,9.5 S14,11 14,15"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ORB CANVAS -->
+  <div id="orb-wrap"><canvas id="orb-canvas"></canvas></div>
+
+  <!-- CORNER CLUSTERS -->
+  <div class="cc tl">
+    <div class="cc-lbl">Atmosphere</div>
+    <div class="cc-big" id="cc-temp">--°F</div>
+    <div class="cc-med" id="cc-cond">--</div>
+    <div class="cc-row"><span>HI</span><span class="cc-v" id="cc-hi">--°</span></div>
+    <div class="cc-row"><span>LO</span><span class="cc-v" id="cc-lo">--°</span></div>
+    <div class="cc-row"><span>WIND</span><span class="cc-v" id="cc-wind">--</span></div>
+  </div>
+
+  <div class="cc tr">
+    <div class="cc-lbl">Markets</div>
+    <div class="cc-row"><span>SPY</span><span id="m-spy" class="cc-v">--</span></div>
+    <div class="cc-row"><span>QQQ</span><span id="m-qqq" class="cc-v">--</span></div>
+    <div class="cc-row"><span>BTC</span><span id="m-btc" class="cc-v">--</span></div>
+    <div class="cc-row"><span>10Y</span><span class="cc-v">4.32%</span></div>
+  </div>
+
+  <div class="cc bl">
+    <div class="cc-lbl">System</div>
+    <div class="cc-row"><span>CPU</span><span id="s-cpu" class="cc-v">--%</span></div>
+    <div class="cc-row"><span>RAM</span><span id="s-ram" class="cc-v">--%</span></div>
+    <div class="cc-row"><span>DISK</span><span id="s-disk" class="cc-v">--%</span></div>
+    <div class="cc-row"><span>NET</span><span class="cc-v">12 MB/s</span></div>
+    <div style="margin-top:7px; font-size:7.5px; opacity:0.25; letter-spacing:1px;">35.2226° N // 97.4395° W</div>
+  </div>
+
+  <div class="cc br">
+    <div class="cc-lbl">Comms</div>
+    <div style="font-size:9px; line-height:1.65; margin-bottom:6px;">
+      <div style="opacity:0.75;">Anthropic Recruiting</div>
+      <div style="opacity:0.38; font-size:7.5px;">Re: Summer 2027</div>
+    </div>
+    <div style="height:1px; background:rgba(0,212,255,0.06); margin-bottom:6px;"></div>
+    <div style="font-size:7.5px; opacity:0.35; letter-spacing:0.7px; line-height:1.7;" id="cc-quote">—</div>
+  </div>
+
+  <!-- GLASS PANEL -->
+  <div id="glass-panel">
+    <div class="gp-ctr"></div><div class="gp-cbl"></div>
+    <div class="gp-topline"></div>
+    <div class="gp-tabs">
+      <button class="gp-tab active" data-pane="intel">INTEL</button>
+      <button class="gp-tab" data-pane="markets">MARKETS</button>
+      <button class="gp-tab" data-pane="life">LIFE</button>
+    </div>
+    <div class="gp-scroll">
+
+      <!-- INTEL -->
+      <div class="tab-pane active" id="pane-intel">
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">Weather — Norman, OK</div>
+          <div style="display:flex; gap:14px; align-items:flex-end; margin-bottom:10px;">
+            <div style="font-size:36px; line-height:1;" id="gp-temp">--°F</div>
+            <div style="font-size:9px; opacity:0.58; line-height:1.85;">
+              <div id="gp-cond">--</div>
+              <div id="gp-hl">HI -- / LO --</div>
+              <div id="gp-wind">WIND --</div>
+            </div>
+          </div>
+        </div>
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">Canvas // OU</div>
+          <div class="fi"><div class="ft">UPCOMING</div><div>FIN 3453 — Midterm Review</div></div>
+          <div class="fi"><div class="ft">DUE SOON</div><div>MIS 3423 — Database Project</div></div>
+          <div class="fi"><div class="ft">POSTED</div><div>Investment Club — Deal Memo Notes</div></div>
+          <div class="fi"><div class="ft">GRADED</div><div style="color:var(--green)">ECON 3113 — A</div></div>
+        </div>
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">System — ClarixHost</div>
+          <div class="bw"><div class="bm"><span>CPU</span><span id="gp-cpu">--%</span></div><div class="bt"><div class="bf" id="gp-cpub" style="width:0%"></div></div></div>
+          <div class="bw"><div class="bm"><span>RAM</span><span id="gp-ram">--%</span></div><div class="bt"><div class="bf" id="gp-ramb" style="width:0%"></div></div></div>
+          <div class="bw"><div class="bm"><span>DISK</span><span id="gp-disk">--%</span></div><div class="bt"><div class="bf" id="gp-diskb" style="width:0%"></div></div></div>
+          <div style="margin-top:4px; display:flex; gap:12px; font-size:7.5px; opacity:0.22; letter-spacing:1px;">
+            <span>UBUNTU 24.04</span><span>COOLIFY</span><span>TAILSCALE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARKETS -->
+      <div class="tab-pane" id="pane-markets">
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">Watchlist</div>
+          <div class="mr"><span class="ms">SPY</span> <span id="gp-spy">--</span></div>
+          <div class="mr"><span class="ms">QQQ</span> <span id="gp-qqq">--</span></div>
+          <div class="mr"><span class="ms">NVDA</span><span id="gp-nvda">--</span></div>
+          <div class="mr"><span class="ms">TSLA</span><span id="gp-tsla">--</span></div>
+          <div class="mr"><span class="ms">AAPL</span><span id="gp-aapl">--</span></div>
+          <div class="mr"><span class="ms">AMD</span> <span id="gp-amd">--</span></div>
+          <div class="mr"><span class="ms">AMZN</span><span id="gp-amzn">--</span></div>
+          <div class="mr"><span class="ms">META</span><span id="gp-meta">--</span></div>
+          <div class="mr"><span class="ms">MSFT</span><span id="gp-msft">--</span></div>
+        </div>
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">Macro</div>
+          <div class="mr"><span class="ms">10Y</span><span style="color:var(--cyan)">4.32%</span></div>
+          <div class="mr"><span class="ms">BTC</span><span id="gp-btc">--</span></div>
+          <div class="mr"><span class="ms">DXY</span><span style="color:var(--cyan)">103.8</span></div>
+          <div class="mr"><span class="ms">VIX</span><span style="color:var(--gold)">18.4</span></div>
+          <div class="mr"><span class="ms">FED</span><span style="color:var(--cyan)">5.25–5.50%</span></div>
+        </div>
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">Options // Bruce</div>
+          <div style="font-size:22px; font-family:'Orbitron',sans-serif; font-weight:700; color:var(--green);">$0.00</div>
+          <div style="font-size:7.5px; opacity:0.3; letter-spacing:1.5px; margin:4px 0 10px;">P&L TODAY // NO ACTIVE POSITIONS</div>
+          <div class="bw">
+            <div class="bm"><span>WIN RATE</span><span>--%</span></div>
+            <div class="bt"><div class="bf g" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">Dallas Sports</div>
+          <div class="fi"><div class="ft">RANGERS</div><div>-- vs. -- · --</div></div>
+          <div class="fi"><div class="ft">MAVERICKS</div><div class="up">W 114–98 · Final</div></div>
+          <div class="fi"><div class="ft">COWBOYS</div><div style="opacity:0.28;">OFF SEASON</div></div>
+        </div>
+      </div>
+
+      <!-- LIFE -->
+      <div class="tab-pane" id="pane-life">
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">Email</div>
+          <div class="fi"><div class="ft">UNREAD · 2H AGO</div><div style="opacity:0.82;">Anthropic Recruiting</div><div style="opacity:0.38; font-size:7.5px;">Re: Summer 2027 Applications</div></div>
+          <div class="fi"><div class="ft">UNREAD · 5H AGO</div><div style="opacity:0.82;">Delta Tau Delta</div><div style="opacity:0.38; font-size:7.5px;">Chapter Meeting — Thursday 7PM</div></div>
+          <div class="fi"><div class="ft">READ</div><div style="opacity:0.52;">Price College Advising</div><div style="opacity:0.28; font-size:7.5px;">MIS Minor Credit Approval</div></div>
+        </div>
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">IB Pipeline — Summer 2027</div>
+          <div class="pg">
+            <div class="pc">APPLIED<span class="pv" style="color:var(--cyan)">--</span></div>
+            <div class="pc">INTRVW<span class="pv" style="color:var(--gold)">--</span></div>
+            <div class="pc">OFFER<span class="pv" style="color:var(--green)">--</span></div>
+            <div class="pc">REJECT<span class="pv" style="color:var(--red)">--</span></div>
+          </div>
+        </div>
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">Today's Ops</div>
+          <div class="fi"><div class="ft">08:00</div><div>Markets open — SPY watch active</div></div>
+          <div class="fi"><div class="ft">11:00</div><div>Investment Club — deal memo</div></div>
+          <div class="fi"><div class="ft">15:00</div><div>Upper body lift</div></div>
+          <div class="fi"><div class="ft">20:00</div><div>Clarix — client deployment review</div></div>
+        </div>
+        <div class="gp-sec">
+          <div class="gp-sec-lbl">Quote of the Day</div>
+          <div style="font-size:10px; opacity:0.55; line-height:1.8; font-style:italic;" id="gp-quote">
+            "The measure of intelligence is the ability to change."
+          </div>
+          <div style="font-size:7.5px; opacity:0.22; letter-spacing:1.5px; margin-top:6px;">— EINSTEIN</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MORNING BRIEF CARDS -->
+  <div class="bc" id="bc-atm" style="top:50%; margin-top:-95px; left:calc(50% - 500px); width:190px;">
+    <button class="bc-x" onclick="closeBc('bc-atm')">✕</button>
+    <div class="bc-lbl">Atmosphere</div>
+    <div class="bc-big" id="br-temp">--°F</div>
+    <div class="bc-sub" id="br-sub">--&#10;HI -- / LO --&#10;WIND --</div>
+  </div>
+
+  <div class="bc" id="bc-mail" style="top:50%; margin-top:-85px; left:calc(50% + 310px); width:190px;">
+    <button class="bc-x" onclick="closeBc('bc-mail')">✕</button>
+    <div class="bc-lbl">Comms</div>
+    <div style="font-size:9.5px; opacity:0.78; line-height:1.65; margin-top:4px;">
+      Anthropic Recruiting<br><span style="opacity:0.42; font-size:8px;">Re: Summer 2027</span>
+    </div>
+    <div style="margin-top:10px; font-size:7.5px; opacity:0.28;">2 UNREAD MESSAGES</div>
+  </div>
+
+  <div class="bc" id="bc-qt" style="top:calc(50% - 320px); left:50%; margin-left:-130px; width:260px;">
+    <button class="bc-x" onclick="closeBc('bc-qt')">✕</button>
+    <div class="bc-lbl">Morning Brief</div>
+    <div style="font-size:9.5px; opacity:0.58; line-height:1.78; font-style:italic; margin-top:4px;">
+      "The measure of intelligence is the ability to change."
+    </div>
+    <div style="font-size:7.5px; opacity:0.22; letter-spacing:1.5px; margin-top:7px;">— EINSTEIN</div>
+  </div>
+
+  <!-- TICKER -->
+  <div id="ticker">
+    <div class="tlbl">LIVE</div>
+    <div class="tscroll">
+      <div class="ti" id="ticker-inner">
+        SPY --% &nbsp;//&nbsp; QQQ --% &nbsp;//&nbsp; NVDA --% &nbsp;//&nbsp; TSLA --% &nbsp;//&nbsp; BTC 67,420 &nbsp;//&nbsp; 10Y 4.32% &nbsp;//&nbsp; DXY 103.8 &nbsp;//&nbsp; VIX 18.4 &nbsp;//&nbsp; WEATHER: --°F -- &nbsp;//&nbsp; SYSTEM NOMINAL &nbsp;//&nbsp; CLARIX: 4 CONTAINERS ACTIVE &nbsp;//&nbsp; JARVIS UPTIME: 00:00:00 &nbsp;//&nbsp; IB PIPELINE: TRACKING &nbsp;//&nbsp; INVESTMENT CLUB: THURSDAY &nbsp;//&nbsp; DELTA TAU DELTA: CHAPTER MEETING THURS &nbsp;//&nbsp; OU PRICE COLLEGE: FALL 2026
+      </div>
+    </div>
+  </div>
+
+  <button id="brief-btn">BRIEF</button>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   ORB — Arc Reactor Canvas
+============================================================ */
+const canvas = document.getElementById('orb-canvas');
+const ctx    = canvas.getContext('2d');
+const SZ = 580;
+canvas.width = canvas.height = SZ;
+const CX = SZ/2, CY = SZ/2;
+
+let frame = 0;
+window.orbState = 'idle';
+
+const RINGS = [
+  {r:228, segs:5, seg:54, gap:18, spd: 0.0017, lw:2.0, a:0.80},
+  {r:200, segs:3, seg:92, gap:28, spd:-0.0012, lw:1.5, a:0.62},
+  {r:170, segs:8, seg:35, gap:10, spd: 0.0030, lw:2.5, a:0.85},
+  {r:142, segs:4, seg:68, gap:22, spd:-0.0035, lw:1.5, a:0.52},
+  {r:112, segs:6, seg:44, gap:16, spd: 0.0050, lw:1.2, a:0.42},
+];
+RINGS.forEach(r => { r.rot = Math.random()*Math.PI*2; });
+
+const GYRO = [
+  {r:210, pitch:0.40, yaw:0,             rs: 0.00090, a:0.30},
+  {r:186, pitch:0.65, yaw:Math.PI/2.6,   rs:-0.00065, a:0.26},
+  {r:158, pitch:0.52, yaw:Math.PI/4.8,   rs: 0.00105, a:0.22},
+  {r:128, pitch:0.78, yaw:Math.PI/3.2,   rs:-0.00140, a:0.18},
+];
+GYRO.forEach(b => { b.rot = Math.random()*Math.PI*2; });
+
+const PARTS = [];
+for (let i=0; i<300; i++) {
+  const ri = RINGS[i % RINGS.length];
+  PARTS.push({
+    r:     ri.r + (Math.random()-0.5)*28,
+    angle: Math.random()*Math.PI*2,
+    spd:   (0.0007+Math.random()*0.0042)*(Math.random()>0.44?1:-1),
+    sz:    0.4+Math.random()*1.5,
+    a:     0.22+Math.random()*0.65,
+    tilt:  0.15+Math.random()*0.7,
+    ph:    Math.random()*Math.PI*2,
+  });
+}
+
+function getBreathe() {
+  const s = window.orbState;
+  if (s==='processing') return 0.90 + Math.sin(frame*0.09)*0.30;
+  if (s==='speaking')   return 0.88 + Math.sin(frame*0.13)*0.34;
+  return 0.80 + Math.sin(frame*0.016)*0.20;
+}
+
+function drawOrb() {
+  ctx.clearRect(0, 0, SZ, SZ);
+  const br = getBreathe();
+
+  ctx.globalCompositeOperation = 'source-over';
+  const bg = ctx.createRadialGradient(CX,CY,0, CX,CY,265);
+  bg.addColorStop(0,    `rgba(0,212,255,${0.062*br})`);
+  bg.addColorStop(0.38, `rgba(0,88,138,${0.024*br})`);
+  bg.addColorStop(1,    'rgba(0,0,0,0)');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, SZ, SZ);
+
+  ctx.globalCompositeOperation = 'lighter';
+
+  GYRO.forEach(b => {
+    b.rot += b.rs;
+    ctx.save();
+    ctx.translate(CX, CY);
+    ctx.rotate(b.yaw + b.rot);
+    ctx.scale(1, Math.cos(b.pitch));
+    ctx.beginPath();
+    ctx.arc(0, 0, b.r, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(0,212,255,${b.a*br})`;
+    ctx.lineWidth = 1;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#00d4ff';
+    ctx.stroke();
+    ctx.restore();
+  });
+
+  ctx.shadowBlur = 0;
+
+  RINGS.forEach(rng => {
+    rng.rot += rng.spd;
+    const step = (rng.seg + rng.gap) * (Math.PI/180);
+    const arc  = rng.seg * (Math.PI/180);
+    ctx.lineWidth = rng.lw;
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = '#00d4ff';
+    for (let s=0; s<rng.segs; s++) {
+      const a0 = rng.rot + s*step;
+      ctx.beginPath();
+      ctx.arc(CX, CY, rng.r, a0, a0+arc);
+      ctx.strokeStyle = `rgba(0,212,255,${rng.a*br})`;
+      ctx.stroke();
+    }
+  });
+
+  ctx.shadowBlur = 0;
+
+  PARTS.forEach(p => {
+    p.angle += p.spd;
+    const px = CX + Math.cos(p.angle) * p.r;
+    const py = CY + Math.sin(p.angle) * p.r * Math.cos(p.tilt);
+    const vis = (Math.sin(p.angle - p.ph)*0.5 + 0.5)*0.75 + 0.25;
+    ctx.beginPath();
+    ctx.arc(px, py, p.sz, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(0,212,255,${p.a*vis*br})`;
+    ctx.fill();
+  });
+
+  const sn = window.orbState === 'idle' ? 5 : 10;
+  for (let i=0; i<sn; i++) {
+    const sy = CY + (Math.random()-0.5)*58;
+    const sw = 10 + Math.random()*88;
+    const sa = (0.05 + Math.random()*0.30)*br;
+    const sg = ctx.createLinearGradient(CX-sw/2,sy, CX+sw/2,sy);
+    sg.addColorStop(0,   'rgba(0,212,255,0)');
+    sg.addColorStop(0.3, `rgba(80,224,255,${sa*0.6})`);
+    sg.addColorStop(0.5, `rgba(225,250,255,${sa})`);
+    sg.addColorStop(0.7, `rgba(80,224,255,${sa*0.6})`);
+    sg.addColorStop(1,   'rgba(0,212,255,0)');
+    ctx.fillStyle = sg;
+    ctx.fillRect(CX-sw/2, sy-0.75, sw, 1.5);
+  }
+
+  const layers = [
+    {r:82, a:0.07},{r:52, a:0.15},{r:30, a:0.30},{r:15, a:0.56},{r:6, a:1.0}
+  ];
+  layers.forEach(({r,a}) => {
+    const g = ctx.createRadialGradient(CX,CY,0, CX,CY,r);
+    g.addColorStop(0,    `rgba(255,255,255,${a*br})`);
+    g.addColorStop(0.38, `rgba(180,242,255,${a*0.48*br})`);
+    g.addColorStop(1,    'rgba(0,212,255,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(CX, CY, r, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  ctx.globalCompositeOperation = 'source-over';
+  frame++;
+}
+
+function orbLoop() { drawOrb(); requestAnimationFrame(orbLoop); }
+
+/* ============================================================
+   CLOCK
+============================================================ */
+function tick() {
+  const n = new Date();
+  const pad = v => String(v).padStart(2,'0');
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  document.getElementById('tb-clock').textContent =
+    `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())} // ${days[n.getDay()]} ${pad(n.getMonth()+1)}.${pad(n.getDate())}.${n.getFullYear()}`;
+}
+
+/* ============================================================
+   SIMULATED DATA
+============================================================ */
+let cpu=44, ram=61, disk=37;
+
+function rflux(v,r){ return Math.max(0,Math.min(100,v+(Math.random()-0.5)*r)); }
+
+function sysUpdate() {
+  cpu=rflux(cpu,5); ram=rflux(ram,2.5); disk=rflux(disk,0.7);
+  const c=cpu.toFixed(0)+'%', r=ram.toFixed(0)+'%', d=disk.toFixed(0)+'%';
+  set('s-cpu',c); set('s-ram',r); set('s-disk',d);
+  set('gp-cpu',c); set('gp-ram',r); set('gp-disk',d);
+  width('gp-cpub',cpu); width('gp-ramb',ram); width('gp-diskb',disk);
+}
+
+function fmtChg() {
+  const pct=(Math.random()-0.46)*2.8, up=pct>=0;
+  return `<span style="color:${up?'var(--green)':'var(--red)'}">${up?'▲':'▼'} ${Math.abs(pct).toFixed(2)}%</span>`;
+}
+
+function mktUpdate() {
+  ['spy','qqq','btc'].forEach(s => { const h=fmtChg(); html('m-'+s,h); html('gp-'+s,h); });
+  ['nvda','tsla','aapl','amd','amzn','meta','msft'].forEach(s => html('gp-'+s,fmtChg()));
+}
+
+const WX = {temp:76, hi:81, lo:58, cond:'CLEAR', wind:'12 MPH SW'};
+function wxLoad() {
+  set('cc-temp',WX.temp+'°F'); set('cc-cond',WX.cond);
+  set('cc-hi',WX.hi+'°'); set('cc-lo',WX.lo+'°'); set('cc-wind',WX.wind);
+  set('gp-temp',WX.temp+'°F'); set('gp-cond',WX.cond);
+  set('gp-hl',`HI ${WX.hi}° / LO ${WX.lo}°`); set('gp-wind','WIND '+WX.wind);
+  set('br-temp',WX.temp+'°F');
+  set('br-sub',`${WX.cond}\nHI ${WX.hi}° / LO ${WX.lo}°\nWIND ${WX.wind}`);
+}
+
+const QTS = [
+  ['"The measure of intelligence is the ability to change."','Einstein'],
+  ['"Risk comes from not knowing what you\'re doing."','Buffett'],
+  ['"An investment in knowledge pays the best interest."','Franklin'],
+  ['"In the middle of every difficulty lies opportunity."','Einstein'],
+];
+function loadQuote() {
+  const q = QTS[Math.floor(Math.random()*QTS.length)];
+  const short = q[0].length > 80 ? q[0].slice(0,78)+'…' : q[0];
+  set('cc-quote', short + ' — ' + q[1]);
+  set('gp-quote', q[0]);
+}
+
+/* ============================================================
+   GLASS PANEL
+============================================================ */
+const panel = document.getElementById('glass-panel');
+
+document.querySelectorAll('.sb-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    const isOpen = panel.classList.contains('open');
+    const cur = document.querySelector('.gp-tab.active')?.dataset.pane;
+    document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
+    if (isOpen && cur===tab) { panel.classList.remove('open'); }
+    else { panel.classList.add('open'); btn.classList.add('active'); swTab(tab); }
+  });
+});
+
+document.querySelectorAll('.gp-tab').forEach(t => {
+  t.addEventListener('click', () => swTab(t.dataset.pane));
+});
+
+function swTab(pane) {
+  document.querySelectorAll('.gp-tab').forEach(t => t.classList.toggle('active', t.dataset.pane===pane));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id==='pane-'+pane));
+}
+
+/* ============================================================
+   MORNING BRIEF
+============================================================ */
+const BCS = ['bc-atm','bc-mail','bc-qt'];
+let briefTO;
+
+function showBrief() {
+  BCS.forEach((id,i) => {
+    setTimeout(() => document.getElementById(id).classList.add('show'), i*320);
+  });
+  clearTimeout(briefTO);
+  briefTO = setTimeout(() => BCS.forEach(id=>closeBc(id)), 9200);
+}
+
+window.closeBc = function(id) { document.getElementById(id).classList.remove('show'); };
+document.getElementById('brief-btn').addEventListener('click', showBrief);
+
+/* ============================================================
+   NM TOGGLE
+============================================================ */
+let nmOn = false;
+document.getElementById('nm-btn').addEventListener('click', function() {
+  nmOn = !nmOn;
+  document.body.style.filter = nmOn ? 'brightness(0.42) saturate(0.28)' : '';
+  this.style.color = nmOn ? 'var(--amber)' : '';
+});
+
+/* ============================================================
+   HELPERS
+============================================================ */
+function set(id,v)  { const e=document.getElementById(id); if(e) e.textContent=v; }
+function html(id,v) { const e=document.getElementById(id); if(e) e.innerHTML=v; }
+function width(id,v){ const e=document.getElementById(id); if(e) e.style.width=v+'%'; }
+
+/* ============================================================
+   BOOT SEQUENCE
+============================================================ */
+const CHECKS = [
+  {t:'ok',  txt:'NEURAL CORE INITIALIZED'},
+  {t:'ok',  txt:'NETWORK LINK ESTABLISHED'},
+  {t:'ok',  txt:'MARKET DATA STREAM CONNECTED'},
+  {t:'ok',  txt:'ATMOSPHERIC SENSORS ONLINE'},
+  {t:'ok',  txt:'ARC REACTOR STABLE — 3.2 GW'},
+  {t:'ok',  txt:'OPENROUTER GATEWAY CONNECTED'},
+  {t:'ok',  txt:'SECURITY PROTOCOLS ACTIVE'},
+  {t:'warn',txt:'COMMS API PENDING AUTHORIZATION'},
+];
+
+(function boot() {
+  const title = document.getElementById('boot-title');
+  const prog  = document.getElementById('boot-progress');
+  const fill  = document.getElementById('boot-fill');
+  const list  = document.getElementById('boot-list');
+  const welc  = document.getElementById('boot-welcome');
+  const flash = document.getElementById('boot-flash');
+  const bootEl= document.getElementById('boot');
+  const app   = document.getElementById('app');
+
+  let fc = 0;
+  const flicker = setInterval(() => {
+    title.style.opacity = fc%2===0 ? '0.92' : '0.04';
+    if (++fc > 10) { clearInterval(flicker); title.style.opacity='1'; }
+  }, 65);
+
+  setTimeout(() => {
+    prog.style.opacity = '1';
+    let pct = 0;
+    const fi = setInterval(() => {
+      pct += 1.6 + Math.random()*2.8;
+      if (pct>=100) { pct=100; clearInterval(fi); }
+      fill.style.width = pct+'%';
+    }, 55);
+  }, 450);
+
+  setTimeout(() => {
+    list.style.opacity = '1';
+    CHECKS.forEach((ck,i) => {
+      setTimeout(() => {
+        const d = document.createElement('div');
+        d.className = 'boot-check';
+        const lbl = ck.t==='ok'
+          ? `<span class="bok">[ OK ]</span>&nbsp; `
+          : `<span class="bwarn">[WARN]</span>&nbsp; `;
+        d.innerHTML = lbl + ck.txt;
+        list.appendChild(d);
+        requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('show')));
+      }, i*215);
+    });
+  }, 750);
+
+  setTimeout(() => { welc.style.opacity='1'; }, 2900);
+
+  setTimeout(() => {
+    flash.style.opacity = '1';
+    setTimeout(() => {
+      flash.style.opacity = '0';
+      bootEl.style.transition = 'opacity 0.5s ease';
+      bootEl.style.opacity    = '0';
+      app.style.opacity       = '1';
+      orbLoop();
+      setInterval(tick, 1000); tick();
+      sysUpdate(); setInterval(sysUpdate, 2600);
+      mktUpdate(); setInterval(mktUpdate, 7000);
+      wxLoad(); loadQuote();
+      setTimeout(() => {
+        bootEl.style.display='none';
+        showBrief();
+      }, 600);
+    }, 200);
+  }, 3650);
+})();
+
+})();
+</script>
+</body>
+</html>
