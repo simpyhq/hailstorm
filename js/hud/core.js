@@ -8,8 +8,8 @@
   J.setHtml = (id, v) => { const e = J.$(id); if (e) e.innerHTML = v; };
   J.setWidth = (id, v) => { const e = J.$(id); if (e) e.style.width = v + '%'; };
 
-  // shared runtime state
-  J.state = { orbState: 'idle' };
+  // shared runtime state (px/py = smoothed parallax offset, -1..1)
+  J.state = { orbState: 'idle', px: 0, py: 0 };
 
   // minimal pub/sub for cross-module signals
   const listeners = {};

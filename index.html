@@ -316,6 +316,9 @@
 <!-- HUD scripts (classic, ordered; window.JARVIS namespace) -->
 <script src="js/hud/core.js"></script>
 <script src="js/hud/orb.js"></script>
+<!-- Three.js global build (CDN). If it fails to load, orb3d.js no-ops and the canvas orb above remains the fallback. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/hud/orb3d.js"></script>
 <script src="js/hud/sim.js"></script>
 <script src="js/hud/parallax.js"></script>
 <script src="js/hud/panels.js"></script>

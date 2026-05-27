@@ -128,7 +128,8 @@ What I'm building right now. Updated as I go.
 - [x] Cinematic v2 HUD with arc reactor orb, boot sequence, glass panels, morning brief cards
 - [x] Made JARVIS the homepage of the site (replacing old dashboard, archived to dashboard-old.html)
 - [x] Claude Code installed on Mac Mini for direct repo editing
-- [ ] **Mouse-driven parallax across all HUD elements** (in progress)
+- [x] Mouse-driven parallax across all HUD elements
+- [x] **Phase 1 (HUD Polish) complete** — lighting, density, tactical pass, Three.js orb
 
 ---
 
@@ -209,6 +210,9 @@ Log of finished features with dates. Builds confidence over time.
 - 2026-05-26: JARVIS set as homepage, old dashboard archived to dashboard-old.html
 - 2026-05-26: Claude Code installed on Mac Mini for direct repo editing
 - 2026-05-26: HAILSTORM_ROADMAP.md created as project compass
+- 2026-05-26: Real-time data wired into HUD (weather, markets, macro, sports, news, Polymarket, Canvas, email, Spotify); leaked secrets pulled from client code into Vercel env
+- 2026-05-26: Homepage de-monolithed into css/hud + js/hud modules (window.JARVIS namespace)
+- 2026-05-26: Phase 1 HUD Polish shipped — volumetric lighting, mouse-driven parallax, peripheral telemetry + tactical vocabulary, Three.js 3D orb rebuild
 
 ---
 

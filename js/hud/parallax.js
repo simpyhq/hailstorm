@@ -30,7 +30,9 @@
   function register() {
     if (registered) return;
     registered = true;
-    add('#orb-wrap', { base: 'translate(-50%,-50%)', tilt: 8, lift: 6, persp: 1100 });
+    // NB: #orb-wrap is intentionally NOT CSS-tilted — the 3D orb tips its own
+    // geometry from J.state.px/py (orb3d.js). The canvas fallback simply
+    // stays centered, which is fine.
     add('.cc',       { tilt: 5, lift: 10, persp: 900 });
     add('.bc',       { tilt: 4, lift: 14, persp: 900 });
     add('.gp-tilt',  { tilt: 5, lift: 0,  persp: 1000 });
@@ -41,6 +43,10 @@
   function apply() {
     cx += (tx - cx) * EASE;
     cy += (ty - cy) * EASE;
+
+    // publish smoothed offset so the 3D orb can tip its actual geometry
+    J.state.px = cx;
+    J.state.py = cy;
 
     for (const L of layers) {
       const dir = L.far ? -1 : 1;
