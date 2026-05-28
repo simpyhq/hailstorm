@@ -34,6 +34,9 @@ cinematic HUD with a live arc-reactor orb; `js/live.js` feeds it real-time data.
 | `ELEVENLABS_VOICE_ID` | `/api/tts` | Optional override; defaults to "Adam" |
 | `OPENAI_API_KEY` | `/api/tts` | Fallback TTS provider |
 | `OPENAI_TTS_VOICE` | `/api/tts` | Optional; defaults to `onyx` |
+| `JARVIS_BRAIN_URL` | `/api/chat` (brain) | Full URL of your brain endpoint — FastAPI `/chat` or OpenClaw directly |
+| `OPENCLAW_API_URL` | `/api/chat` | Convenience — proxy calls `${url}/api/chat` |
+| `JARVIS_BRAIN_TOKEN` | `/api/chat` | Optional Bearer token for the brain endpoint |
 
 ## Voice (Phase 2)
 

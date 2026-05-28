@@ -220,9 +220,45 @@
     if (/\b(brief|morning brief)\b/.test(q)) { J.panels && J.panels.showBrief && J.panels.showBrief(); return 'Morning brief.'; }
     if (/\b(close|cancel|never mind|nevermind)\b/.test(q)) { return 'Standing by.'; }
     if (/\b(who are you|what are you)\b/.test(q)) return "I'm Jarvis. Your H U D presence.";
-    return "I'm not wired into Open Claw yet, so I can't think about that one. Once the brain is linked, I'll be able to.";
+    return null;  // unknown locally — defer to the OpenClaw brain (if configured)
   }
-  function handle(text) { speak(router(text)); }
+
+  /* persistent session id so the brain can keep multi-turn context */
+  let _session = null;
+  function getSession() {
+    if (_session) return _session;
+    try { _session = localStorage.getItem('jarvis_session'); } catch (_) {}
+    if (!_session) {
+      _session = (crypto && crypto.randomUUID && crypto.randomUUID())
+        || ('s_' + Math.random().toString(36).slice(2) + Date.now().toString(36));
+      try { localStorage.setItem('jarvis_session', _session); } catch (_) {}
+    }
+    return _session;
+  }
+
+  async function askBrain(text) {
+    try {
+      const r = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, session_id: getSession() }),
+      });
+      if (!r.ok) return null;       // 503 = no brain configured -> use fallback
+      const data = await r.json();
+      return (data && data.reply) ? data.reply : null;
+    } catch (_) { return null; }
+  }
+
+  async function handle(text) {
+    // 1) HUD commands + on-screen data answer locally for instant responses
+    const local = router(text);
+    if (local) { speak(local); return; }
+    // 2) otherwise ask the brain (OpenClaw via /api/chat)
+    const remote = await askBrain(text);
+    if (remote) { speak(remote); return; }
+    // 3) last-resort fallback
+    speak("I'm not wired into Open Claw yet. Set the brain U R L in Vercel and I'll be online.");
+  }
 
   /* ---- WAKE toggle ---- */
   function setWake(on) {
