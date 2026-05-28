@@ -5,6 +5,12 @@
   position:fixed; z-index:20; padding:14px 12px 12px; min-width:155px;
   backdrop-filter:blur(1px) brightness(1.12);
   -webkit-backdrop-filter:blur(1px) brightness(1.12);
+  cursor:pointer;
+  transition:background 0.2s ease, box-shadow 0.2s ease;
+}
+.cc:hover {
+  background:rgba(0,212,255,0.025);
+  box-shadow:0 0 22px rgba(0,212,255,0.05);
 }
 .cc::before, .cc::after { content:''; position:absolute; width:10px; height:10px; }
 
@@ -133,3 +139,12 @@
 .fi { padding:5px 0; border-bottom:1px solid rgba(0,212,255,0.05); font-size:9px; letter-spacing:0.8px; line-height:1.6; }
 .fi:last-child { border-bottom:none; }
 .ft { opacity:0.46; font-size:7.5px; letter-spacing:2px; margin-bottom:1px; }
+
+/* clickable rows + row-link wrappers (Polymarket, Canvas, etc.) */
+.fi-link { display:block; color:inherit; text-decoration:none; }
+.fi.clickable { cursor:pointer; transition:background 0.15s ease, transform 0.15s ease; padding-left:4px; padding-right:4px; margin-left:-4px; margin-right:-4px; }
+.fi.clickable:hover { background:rgba(0,212,255,0.04); }
+
+/* Quote rotates on click */
+#cc-quote, #gp-quote { cursor:pointer; transition:color 0.15s ease; }
+#cc-quote:hover, #gp-quote:hover { color:var(--cyan); }

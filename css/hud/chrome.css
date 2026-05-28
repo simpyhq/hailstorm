@@ -126,6 +126,9 @@
   opacity:0.55; display:inline-block;
   animation:marquee 75s linear infinite;
 }
+.ti:hover { animation-play-state:paused; }
+.ticker-link { color:inherit; text-decoration:none; }
+.ticker-link:hover { color:var(--cyan); text-decoration:underline; text-underline-offset:2px; }
 @keyframes marquee {
   from { transform:translateX(100vw); }
   to   { transform:translateX(-100%); }

@@ -50,3 +50,22 @@ body.v-speak   #voice-btn { color:var(--hot);  border-color:var(--cyan);  box-sh
 @media (prefers-reduced-motion: reduce) {
   body.v-listen #voice-btn { animation:none; }
 }
+
+/* WAKE word toggle — sits next to VOX; glows green when always-listening */
+#wake-btn {
+  padding:2px 8px; border:1px solid rgba(0,212,255,0.22);
+  background:transparent; color:rgba(0,212,255,0.55);
+  font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px;
+  cursor:pointer; transition:all 0.2s;
+}
+#wake-btn:hover { color:var(--cyan); border-color:var(--cyan); background:rgba(0,212,255,0.05); }
+#wake-btn.active {
+  color:var(--green); border-color:var(--green);
+  box-shadow:0 0 12px rgba(129,255,155,0.45), inset 0 0 6px rgba(129,255,155,0.15);
+}
+body.wake-on #voice-btn { box-shadow:0 0 8px rgba(129,255,155,0.20); }
+
+/* Clicking the orb is push-to-talk */
+#orb-canvas { pointer-events:auto; cursor:pointer; }
+#orb-canvas:hover { filter:brightness(1.05); }
+body.v-listen #orb-canvas, body.v-process #orb-canvas, body.v-speak #orb-canvas { cursor:default; }

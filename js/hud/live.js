@@ -56,7 +56,7 @@
   }
 
   /* shared snapshot used to build the live ticker */
-  const ticker = { mkt: {}, news: [] };
+  const ticker = { mkt: {}, news: [] };           // news = [{text, url}]
   function renderTicker() {
     const m = ticker.mkt;
     const parts = [];
@@ -65,9 +65,14 @@
     if (m.btc) parts.push(`BTC ${m.btc}`);
     if (m.ten) parts.push(`10Y ${m.ten}`);
     if (m.vix) parts.push(`VIX ${m.vix}`);
-    const news = ticker.news.length ? ticker.news : ['SYSTEM NOMINAL'];
+    const news = ticker.news.length ? ticker.news : [{ text: 'SYSTEM NOMINAL' }];
     const sep = ' &nbsp;//&nbsp; ';
-    setHtml('ticker-inner', parts.join(sep) + (parts.length ? sep : '') + news.map(esc).join(sep));
+    const newsHtml = news.map((n) =>
+      n.url
+        ? `<a class="ticker-link" href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.text)}</a>`
+        : esc(n.text)
+    ).join(sep);
+    setHtml('ticker-inner', parts.join(sep) + (parts.length ? sep : '') + newsHtml);
   }
 
   /* ============================================================
@@ -266,7 +271,8 @@
       if (res.status === 'fulfilled' && res.value?.status === 'ok' && Array.isArray(res.value.items)) {
         res.value.items.slice(0, 4).forEach((it) => {
           const t = (it?.title || '').replace(/\s+/g, ' ').trim();
-          if (t) heads.push(`${FEED_SRC[i]}: ${t}`);
+          const u = typeof it?.link === 'string' ? it.link : '';
+          if (t) heads.push({ text: `${FEED_SRC[i]}: ${t}`, url: u });
         });
       }
     });
@@ -297,9 +303,11 @@
         const prob = Math.max(0, Math.min(100, parseFloat(prices[yi >= 0 ? yi : 0]) * 100));
         let q = (m?.question || 'N/A').trim();
         if (q.length > 42) q = q.slice(0, 39) + '...';
-        return `<div class="fi"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
+        const slug = m?.events?.[0]?.slug || m?.slug || '';
+        const url = slug ? `https://polymarket.com/event/${encodeURIComponent(slug)}` : 'https://polymarket.com/';
+        return `<a class="fi-link" href="${esc(url)}" target="_blank" rel="noopener"><div class="fi clickable"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
           <span style="opacity:.72;">${esc(q)}</span>
-          <span style="color:${probColor(prob)};font-family:'Orbitron',sans-serif;">${Math.round(prob)}%</span></div></div>`;
+          <span style="color:${probColor(prob)};font-family:'Orbitron',sans-serif;">${Math.round(prob)}%</span></div></div></a>`;
       }).join('');
       el.innerHTML = rows || `<div class="fi"><div style="opacity:.4">N/A</div></div>`;
     } catch (_) {
@@ -328,7 +336,8 @@
           const due = new Date(e.start_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
           const urgent = e.ms - now <= 24 * 3600 * 1000;
           let t = e.title; if (t.length > 32) t = t.slice(0, 29) + '...';
-          return `<div class="fi"><div class="ft"${urgent ? ' style="color:var(--amber)"' : ''}>${esc(due)}</div><div>${esc(t)}</div></div>`;
+          const url = e.html_url || 'https://canvas.ou.edu/';
+          return `<a class="fi-link" href="${esc(url)}" target="_blank" rel="noopener"><div class="fi clickable"><div class="ft"${urgent ? ' style="color:var(--amber)"' : ''}>${esc(due)}</div><div>${esc(t)}</div></div></a>`;
         }).join('');
       el.innerHTML = rows || `<div class="fi"><div style="opacity:.4">No upcoming events</div></div>`;
     } catch (_) {

@@ -54,9 +54,31 @@
     });
   }
 
+  /* corner clusters open the panel pane that matches their content */
+  function initClusters() {
+    const map = { tl: 'intel', tr: 'markets', bl: 'intel', br: 'life' };
+    Object.entries(map).forEach(([pos, pane]) => {
+      const el = document.querySelector('.cc.' + pos);
+      if (!el) return;
+      el.addEventListener('click', () => {
+        document.querySelector('.sb-btn[data-tab="' + pane + '"]')?.click();
+      });
+    });
+  }
+
+  /* clicking the quote rotates to the next one */
+  function initQuoteClick() {
+    ['cc-quote', 'gp-quote'].forEach((id) => {
+      const el = J.$(id);
+      if (el) el.addEventListener('click', () => J.sim && J.sim.loadQuote && J.sim.loadQuote());
+    });
+  }
+
   function init() {
     initPanelControls();
     initNM();
+    initClusters();
+    initQuoteClick();
     J.$('brief-btn').addEventListener('click', showBrief);
     window.closeBc = closeBc; // compat for inline onclick on brief cards
   }
