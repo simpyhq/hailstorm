@@ -146,7 +146,12 @@
     resumeWake();
   }
 
-  /* ---- TTS (premium /api/tts -> browser speechSynthesis fallback) ---- */
+  /* ---- TTS ----
+     Streaming path: pipe ElevenLabs's chunked MP3 through /api/tts and feed
+     it into a MediaSource SourceBuffer ('audio/mpeg'). First audio plays
+     sub-second. Falls back to blob playback when MSE/MP3 isn't supported
+     (Safari), and ultimately to browser speechSynthesis when /api/tts can't
+     reach a provider (no key, file://, etc.). */
   async function speak(text) {
     if (!text) { resumeWake(); return; }
     setMode('speak');
@@ -159,17 +164,75 @@
         body: JSON.stringify({ text }),
       });
       if (res.ok) {
+        const canStream = 'MediaSource' in window
+          && MediaSource.isTypeSupported('audio/mpeg')
+          && res.body && typeof res.body.getReader === 'function';
+        if (canStream) { await playStream(res); return; }
         const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        audio = new Audio(url);
-        audio.onended = () => { URL.revokeObjectURL(url); setMode('idle'); hideTranscript(400); resumeWake(); };
-        audio.onerror = () => { URL.revokeObjectURL(url); speakFallback(text); };
-        await audio.play();
+        await playBlob(blob);
         return;
       }
     } catch (_) { /* fall through */ }
-
     speakFallback(text);
+  }
+
+  function playBlob(blob) {
+    return new Promise((resolve) => {
+      const url = URL.createObjectURL(blob);
+      audio = new Audio(url);
+      audio.onended = () => { URL.revokeObjectURL(url); setMode('idle'); hideTranscript(400); resumeWake(); resolve(); };
+      audio.onerror = () => { URL.revokeObjectURL(url); setMode('idle'); hideTranscript(400); resumeWake(); resolve(); };
+      audio.play().catch(() => { URL.revokeObjectURL(url); setMode('idle'); hideTranscript(400); resumeWake(); resolve(); });
+    });
+  }
+
+  function playStream(res) {
+    return new Promise((resolve) => {
+      const ms = new MediaSource();
+      const url = URL.createObjectURL(ms);
+      audio = new Audio(url);
+      audio.preload = 'auto';
+      let resolved = false;
+      const finish = () => { if (resolved) return; resolved = true; URL.revokeObjectURL(url); resolve(); };
+      audio.onended = () => { setMode('idle'); hideTranscript(400); resumeWake(); finish(); };
+      audio.onerror = () => { setMode('idle'); hideTranscript(400); resumeWake(); finish(); };
+
+      ms.addEventListener('sourceopen', async () => {
+        let sb;
+        try { sb = ms.addSourceBuffer('audio/mpeg'); }
+        catch (_) { finish(); return; }
+
+        const reader = res.body.getReader();
+        const queue = [];
+        let started = false;
+
+        const drain = () => {
+          if (sb.updating || queue.length === 0) return;
+          try { sb.appendBuffer(queue.shift()); } catch (_) { /* ignore */ }
+        };
+        const maybePlay = () => {
+          if (!started && audio.readyState >= 2) {
+            started = true;
+            audio.play().catch(() => {});
+          }
+        };
+        sb.addEventListener('updateend', () => { drain(); maybePlay(); });
+
+        try {
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            queue.push(value); drain(); maybePlay();
+          }
+          // wait for tail chunks to flush, then close the stream
+          await new Promise((r) => {
+            const check = () => (queue.length === 0 && !sb.updating) ? r() : setTimeout(check, 30);
+            check();
+          });
+          if (ms.readyState === 'open') { try { ms.endOfStream(); } catch (_) {} }
+        } catch (_) { finish(); }
+      }, { once: true });
+    });
   }
 
   function speakFallback(text) {

@@ -26,9 +26,24 @@ export default async function handler(req, res) {
   const openaiKey = process.env.OPENAI_API_KEY;
 
   try {
+    // helper: pipe a web ReadableStream to the Node response chunk by chunk
+    async function pipeAudio(upstream) {
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.setHeader('Cache-Control', 'no-store');
+      res.status(200);
+      const reader = upstream.getReader();
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        res.write(Buffer.from(value));
+      }
+      res.end();
+    }
+
     if (elevenKey) {
       const voiceId = voiceOverride || process.env.ELEVENLABS_VOICE_ID || 'pNInz6obpgDQGcFmaJgB'; // "Adam"
-      const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      // /stream + optimize_streaming_latency = fastest time-to-first-byte
+      const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream?optimize_streaming_latency=3`, {
         method: 'POST',
         headers: {
           'xi-api-key': elevenKey,
@@ -45,10 +60,8 @@ export default async function handler(req, res) {
         const detail = await r.text();
         return res.status(502).json({ error: 'elevenlabs failed', status: r.status, detail });
       }
-      const buf = Buffer.from(await r.arrayBuffer());
-      res.setHeader('Content-Type', 'audio/mpeg');
-      res.setHeader('Cache-Control', 'no-store');
-      return res.status(200).send(buf);
+      await pipeAudio(r.body);
+      return;
     }
 
     if (openaiKey) {
@@ -66,10 +79,8 @@ export default async function handler(req, res) {
         const detail = await r.text();
         return res.status(502).json({ error: 'openai tts failed', status: r.status, detail });
       }
-      const buf = Buffer.from(await r.arrayBuffer());
-      res.setHeader('Content-Type', 'audio/mpeg');
-      res.setHeader('Cache-Control', 'no-store');
-      return res.status(200).send(buf);
+      await pipeAudio(r.body);
+      return;
     }
 
     return res.status(503).json({ error: 'no TTS provider configured' });
