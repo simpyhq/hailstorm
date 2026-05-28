@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="css/hud/brief.css">
 <link rel="stylesheet" href="css/hud/boot.css">
 <link rel="stylesheet" href="css/hud/parallax.css">
+<link rel="stylesheet" href="css/hud/voice.css">
 </head>
 <body>
 
@@ -60,6 +61,7 @@
       <span id="tb-pwr">PWR 3.21 GW</span>
       <span id="tb-sig">SIG 98.7%</span>
       <span class="tb-ok">SYS NOMINAL</span>
+      <button id="voice-btn" title="Push-to-talk (` backtick)">VOX</button>
       <button id="nm-btn">NM</button>
     </div>
   </div>
@@ -311,6 +313,9 @@
   </div>
 
   <button id="brief-btn">BRIEF</button>
+
+  <!-- VOICE TRANSCRIPT BUBBLE -->
+  <div id="voice-transcript"></div>
 </div>
 
 <!-- HUD scripts (classic, ordered; window.JARVIS namespace) -->
@@ -324,6 +329,7 @@
 <script src="js/hud/panels.js"></script>
 <script src="js/hud/boot.js"></script>
 <script src="js/hud/live.js"></script>
+<script src="js/hud/voice.js"></script>
 <script src="js/hud/main.js"></script>
 </body>
 </html>

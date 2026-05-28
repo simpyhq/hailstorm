@@ -28,6 +28,7 @@
 
   function getBreathe() {
     const s = J.state.orbState;
+    if (s === 'listening')  return 0.86 + Math.sin(frame * 0.12) * 0.22;   // alert hover
     if (s === 'processing') return 0.90 + Math.sin(frame * 0.09) * 0.30;
     if (s === 'speaking')   return 0.88 + Math.sin(frame * 0.13) * 0.34;
     return 0.80 + Math.sin(frame * 0.016) * 0.20;

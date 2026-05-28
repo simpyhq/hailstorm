@@ -5,6 +5,7 @@
 
   // listeners that don't depend on the reveal can attach immediately
   J.panels.init();
+  J.voice && J.voice.init();
 
   // real data starts fetching right away so it's ready by the time we reveal
   J.live.start();

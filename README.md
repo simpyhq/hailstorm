@@ -30,6 +30,20 @@ cinematic HUD with a live arc-reactor orb; `js/live.js` feeds it real-time data.
 |----------|---------|-------|
 | `CANVAS_TOKEN` | `/api/canvas-events` | Canvas → Account → Settings → New Access Token |
 | `SIMPLYHQ_PASSWORD` | `/api/simplyhq` | SimplyHQ portal password |
+| `ELEVENLABS_API_KEY` | `/api/tts` (voice out) | Premium TTS provider (preferred) |
+| `ELEVENLABS_VOICE_ID` | `/api/tts` | Optional override; defaults to "Adam" |
+| `OPENAI_API_KEY` | `/api/tts` | Fallback TTS provider |
+| `OPENAI_TTS_VOICE` | `/api/tts` | Optional; defaults to `onyx` |
+
+## Voice (Phase 2)
+
+Push-to-talk: click **VOX** in the top bar (or press the **`** backtick key
+anywhere outside a text field). The orb shifts to *listening*, then
+*processing*, then *speaking* as the loop runs. With no TTS key set the
+HUD uses the browser's built-in voice; set `ELEVENLABS_API_KEY` in Vercel
+for the cinematic version. The brain stub answers questions about HUD data
+(time, weather, markets, sports, host stats) and tab/brief commands; it's
+swap-ready for OpenClaw later.
 
 ## ⚠️ Rotate leaked credentials
 
