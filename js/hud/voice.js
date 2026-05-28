@@ -25,6 +25,57 @@
   let audio = null;
   let wakeEnabled = false;
 
+  /* ---- mic / secure-context guards ----
+     Voice input requires HTTPS or localhost. On file:// the browser silently
+     denies the mic ('not-allowed') even when the permission prompt seems to
+     appear. We detect this up front and surface a clear, actionable message
+     instead of letting the page look broken. */
+  const _host = location.hostname;
+  const isLocalhost = _host === 'localhost' || _host === '127.0.0.1' || _host === '::1';
+  const isHttps = location.protocol === 'https:';
+  const isFile = location.protocol === 'file:';
+  const canMic = !isFile && (isHttps || isLocalhost);
+
+  function describeError(err) {
+    switch (err) {
+      case 'not-allowed':
+      case 'service-not-allowed':
+        return canMic
+          ? 'Mic blocked. Click the lock icon in the address bar → set Microphone to Allow → refresh.'
+          : 'Voice needs H T T P S. Open the deployed site (project-hailstorm.vercel.app), not the local file.';
+      case 'audio-capture': return 'No microphone found on this device.';
+      case 'network':       return 'Network blocked speech recognition.';
+      case 'no-speech':     return null;   // normal silence
+      case 'aborted':       return null;   // we caused it
+      default:              return null;
+    }
+  }
+
+  function preflight() {
+    if (!SpeechRec) {
+      showTranscript('Voice input requires Chrome, Edge, or Safari.', 'speaking');
+      hideTranscript(5000);
+      return false;
+    }
+    if (!canMic) {
+      showTranscript('Voice needs H T T P S. Open the deployed site, not the local file.', 'speaking');
+      hideTranscript(6000);
+      return false;
+    }
+    return true;
+  }
+
+  /* if the user previously denied mic for this site, surface that proactively
+     so they aren't left wondering why VOX does nothing */
+  if (canMic && navigator.permissions && navigator.permissions.query) {
+    navigator.permissions.query({ name: 'microphone' }).then((status) => {
+      if (status.state === 'denied') {
+        // shown only when they actually try to use voice; checked again at click time
+      }
+      status.onchange = () => { /* state can change while page is open */ };
+    }).catch(() => {});
+  }
+
   /* ---- visual state plumbing ---- */
   function setMode(next) {
     mode = next;
@@ -64,31 +115,37 @@
     try { rec && rec.stop(); } catch (_) {}
     rec = makeRec(true);
     if (!rec) return;
+    let pendingActive = false;     // set when "jarvis" was heard; onend hands off
+
     rec.onresult = (e) => {
       const last = e.results[e.results.length - 1];
       const text = ((last && last[0] && last[0].transcript) || '').toLowerCase();
       if (/\bjarvis\b/.test(text)) {
-        try { rec.stop(); } catch (_) {}
-        // small gap so the wake word itself isn't captured as the command
-        setTimeout(() => { if (mode !== 'speak') activeListen(); }, 140);
+        pendingActive = true;
+        try { rec.stop(); } catch (_) {}     // wait for onend to start active listen
       }
     };
     rec.onerror = (e) => {
-      if (e && e.error === 'not-allowed') {
+      const code = e && e.error;
+      // hard failures: disable wake + tell the user what to do
+      if (code === 'not-allowed' || code === 'service-not-allowed' || code === 'audio-capture') {
         wakeEnabled = false;
         try { localStorage.setItem('jarvis_wake', '0'); } catch (_) {}
         document.body.classList.remove('wake-on');
         const btn = J.$('wake-btn'); if (btn) btn.classList.remove('active');
         setMode('idle');
-        showTranscript('Mic blocked. Allow microphone in the address bar.', 'speaking');
-        hideTranscript(4500);
+        const msg = describeError(code);
+        if (msg) { showTranscript(msg, 'speaking'); hideTranscript(7000); }
         return;
       }
-      if (wakeEnabled && mode === 'wake') setTimeout(startWake, 1200);
+      // transient (no-speech, network, aborted): back off and retry
+      if (wakeEnabled && mode === 'wake') setTimeout(startWake, 1500);
     };
     rec.onend = () => {
-      // browsers end continuous mode periodically — restart while wake is on
-      if (wakeEnabled && mode === 'wake') setTimeout(startWake, 250);
+      // 1) wake-word triggered: wait for full teardown, then start active listen
+      if (pendingActive) { pendingActive = false; setTimeout(activeListen, 220); return; }
+      // 2) browser ended continuous recognition on its own — restart if still on
+      if (wakeEnabled && mode === 'wake') setTimeout(startWake, 400);
     };
     setMode('wake');
     try { rec.start(); } catch (_) {}
@@ -117,10 +174,9 @@
     };
     rec.onerror = (e) => {
       setMode('idle');
-      if (e && e.error === 'not-allowed') {
-        showTranscript('Mic blocked. Allow microphone in the address bar.', 'speaking');
-        hideTranscript(4500);
-      } else hideTranscript(600);
+      const msg = describeError(e && e.error);
+      if (msg) { showTranscript(msg, 'speaking'); hideTranscript(7000); }
+      else hideTranscript(600);
       resumeWake();
     };
     rec.onend = () => {
@@ -135,7 +191,10 @@
     try { rec.start(); } catch (_) {}
   }
 
-  function listen() { activeListen(); }
+  function listen() {
+    if (!preflight()) return;
+    activeListen();
+  }
 
   function cancel() {
     try { rec && rec.stop(); } catch (_) {}
@@ -325,6 +384,13 @@
 
   /* ---- WAKE toggle ---- */
   function setWake(on) {
+    if (on && !preflight()) {
+      // user asked for wake but the environment can't deliver it — don't persist on
+      document.body.classList.remove('wake-on');
+      const btn = J.$('wake-btn'); if (btn) btn.classList.remove('active');
+      try { localStorage.setItem('jarvis_wake', '0'); } catch (_) {}
+      return;
+    }
     wakeEnabled = !!on;
     try { localStorage.setItem('jarvis_wake', wakeEnabled ? '1' : '0'); } catch (_) {}
     document.body.classList.toggle('wake-on', wakeEnabled);
