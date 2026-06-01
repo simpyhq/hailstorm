@@ -30,9 +30,9 @@ cinematic HUD with a live arc-reactor orb; `js/live.js` feeds it real-time data.
 |----------|---------|-------|
 | `CANVAS_TOKEN` | `/api/canvas-events` | Canvas → Account → Settings → New Access Token |
 | `SIMPLYHQ_PASSWORD` | `/api/simplyhq` | SimplyHQ portal password |
-| `ELEVENLABS_API_KEY` | `/api/tts` (voice out) | Premium TTS provider (preferred) |
+| `ELEVENLABS_API_KEY` | `/api/tts` (voice out) | Preferred TTS provider |
 | `ELEVENLABS_VOICE_ID` | `/api/tts` | Optional override; defaults to "Adam" |
-| `OPENAI_API_KEY` | `/api/tts` | Fallback TTS provider |
+| `OPENAI_API_KEY` | `/api/tts` | Automatic fallback if ElevenLabs fails (quota / billing / 5xx) — set both keys and voice stays online when one provider has an issue |
 | `OPENAI_TTS_VOICE` | `/api/tts` | Optional; defaults to `onyx` |
 | `JARVIS_BRAIN_URL` | `/api/chat` (brain) | Full URL of your brain endpoint — FastAPI `/chat` or OpenClaw directly |
 | `OPENCLAW_API_URL` | `/api/chat` | Convenience — proxy calls `${url}/api/chat` |
