@@ -1,0 +1,14 @@
+[Unit]
+Description=Run the daily security scan
+Documentation=https://github.com/simpyhq/hailstorm/blob/main/ops/security/README.md
+
+[Timer]
+# Run once a day at 04:00 UTC, with up to 30min of jitter so multiple
+# servers don't all hit the same alert webhook at once.
+OnCalendar=*-*-* 04:00:00 UTC
+RandomizedDelaySec=30min
+Persistent=true
+Unit=security-scan.service
+
+[Install]
+WantedBy=timers.target

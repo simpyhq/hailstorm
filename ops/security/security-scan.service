@@ -1,0 +1,17 @@
+[Unit]
+Description=Daily security scan for ClarixHost
+Documentation=https://github.com/simpyhq/hailstorm/blob/main/ops/security/README.md
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/daily-security-scan.sh
+EnvironmentFile=-/etc/security-scan.env
+StandardOutput=journal
+StandardError=journal
+User=root
+# Don't let a long ClamAV scan run forever
+TimeoutStartSec=30min
+# Soft-fail: don't taint systemd state when CRIT findings exit non-zero
+SuccessExitStatus=0 1 2 3 4 5 6 7 8 9 10
