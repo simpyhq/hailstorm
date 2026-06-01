@@ -35,20 +35,80 @@
   const isHttps = location.protocol === 'https:';
   const isFile = location.protocol === 'file:';
   const canMic = !isFile && (isHttps || isLocalhost);
+  const UA = navigator.userAgent || '';
+  const isSafari = /safari/i.test(UA) && !/chrome|chromium|crios|edg|android/i.test(UA);
+  const isBrave = !!(navigator.brave && navigator.brave.isBrave);
+
+  // Probe whether the OS+browser will actually hand us a mic, separate from
+  // whether SpeechRecognition's backend (Google / Apple) will run. Both can
+  // fail with the same 'not-allowed' code but they need different fixes.
+  let micProbed = false;
+  let micWorks = null;
+  async function probeMic() {
+    if (micProbed) return micWorks;
+    micProbed = true;
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('no getUserMedia');
+      const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+      s.getTracks().forEach((t) => t.stop());
+      micWorks = true;
+    } catch (e) {
+      console.warn('[voice] getUserMedia probe failed:', e && e.name, e && e.message);
+      micWorks = false;
+    }
+    return micWorks;
+  }
 
   function describeError(err) {
     switch (err) {
       case 'not-allowed':
       case 'service-not-allowed':
-        return canMic
-          ? 'Mic blocked. Click the lock icon in the address bar → set Microphone to Allow → refresh.'
-          : 'Voice needs H T T P S. Open the deployed site (project-hailstorm.vercel.app), not the local file.';
+        if (!canMic) return 'Voice needs H T T P S. Open the deployed site (project-hailstorm.vercel.app), not the local file.';
+        if (micWorks === true) {
+          // Mic itself works -> the speech-recognition service is what's blocked
+          if (isSafari) return 'Mic OK — Safari\'s speech recognition is off. macOS: System Settings → Privacy & Security → Speech Recognition → toggle Safari ON, then fully quit and reopen Safari.';
+          if (isBrave)  return 'Mic OK — Brave Shields are blocking the speech service. Click the lion icon → set Shields to OFF for this site → refresh.';
+          return 'Mic OK — but the browser is blocking the speech-recognition service. Usually a privacy extension (uBlock strict mode, Privacy Badger), a DNS blocker, or browser shields. Try Chrome incognito with extensions disabled. Run JARVIS.voiceDiag() in the console (Cmd+Option+I) for details.';
+        }
+        return 'Mic blocked. Click the lock icon in the address bar → set Microphone to Allow → refresh. (If macOS just granted access, fully quit & reopen the browser.)';
       case 'audio-capture': return 'No microphone found on this device.';
-      case 'network':       return 'Network blocked speech recognition.';
+      case 'network':       return 'Network blocked speech recognition (the browser couldn\'t reach the speech service).';
       case 'no-speech':     return null;   // normal silence
       case 'aborted':       return null;   // we caused it
       default:              return null;
     }
+  }
+
+  // Console-runnable diagnostic — paste JARVIS.voiceDiag() into devtools.
+  async function diag() {
+    const lines = [];
+    const push = (s) => { lines.push(s); };
+    push('=== Jarvis voice diagnostic ===');
+    push('URL              : ' + location.href);
+    push('secure context   : ' + window.isSecureContext + '  protocol: ' + location.protocol);
+    push('SpeechRecognition: ' + (SpeechRec ? 'available' : 'NOT available'));
+    push('isSafari/isBrave : ' + isSafari + ' / ' + isBrave);
+    push('UA               : ' + navigator.userAgent);
+    try {
+      const p = await navigator.permissions.query({ name: 'microphone' });
+      push('perm [microphone]: ' + p.state);
+    } catch (e) { push('perm [microphone]: query failed (' + (e && e.message) + ')'); }
+    try {
+      const p = await navigator.permissions.query({ name: 'speech-recognition' });
+      push('perm [speech-rec]: ' + p.state);
+    } catch (_) { push('perm [speech-rec]: not supported by this browser'); }
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const t = s.getAudioTracks();
+      push('getUserMedia     : SUCCESS — ' + t.length + ' audio track(s)');
+      t.forEach((tr, i) => push('  track[' + i + ']    : ' + (tr.label || '(no label)') + '  enabled=' + tr.enabled + '  muted=' + tr.muted));
+      s.getTracks().forEach((tr) => tr.stop());
+    } catch (e) { push('getUserMedia     : FAIL — ' + (e && e.name) + ': ' + (e && e.message)); }
+    push('micWorks (cached): ' + micWorks);
+    push('=== end ===');
+    const out = lines.join('\n');
+    console.log(out);
+    return out;
   }
 
   function preflight() {
@@ -127,6 +187,7 @@
     };
     rec.onerror = (e) => {
       const code = e && e.error;
+      console.warn('[voice] wake SpeechRecognition error:', code, '| micWorks:', micWorks);
       // hard failures: disable wake + tell the user what to do
       if (code === 'not-allowed' || code === 'service-not-allowed' || code === 'audio-capture') {
         wakeEnabled = false;
@@ -173,9 +234,10 @@
       }
     };
     rec.onerror = (e) => {
+      console.warn('[voice] SpeechRecognition error:', e && e.error, '| micWorks:', micWorks, '| isSafari:', isSafari);
       setMode('idle');
       const msg = describeError(e && e.error);
-      if (msg) { showTranscript(msg, 'speaking'); hideTranscript(7000); }
+      if (msg) { showTranscript(msg, 'speaking'); hideTranscript(8000); }
       else hideTranscript(600);
       resumeWake();
     };
@@ -191,8 +253,11 @@
     try { rec.start(); } catch (_) {}
   }
 
-  function listen() {
+  async function listen() {
     if (!preflight()) return;
+    // probe getUserMedia so describeError can tell mic-blocked apart from
+    // speech-service-blocked when SpeechRecognition fires 'not-allowed'
+    await probeMic();
     activeListen();
   }
 
@@ -436,5 +501,5 @@
     } catch (_) {}
   }
 
-  J.voice = { init, listen, speak, cancel, setWake, toggleWake };
+  J.voice = { init, listen, speak, cancel, setWake, toggleWake, diag };
 })(window.JARVIS = window.JARVIS || {});
